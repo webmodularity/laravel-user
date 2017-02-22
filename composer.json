@@ -1,0 +1,28 @@
+{
+  "name": "webmod/laravel-user",
+  "description": "WM Package that handles authentication and users.",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Rory Hellyer",
+      "email": "rory@webmodularity.com"
+    }
+  ],
+  "repositories": [
+    {"type": "composer", "url": "https://toran.webmodularity.com/repo/private/"}
+  ],
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "WebModularity\\LaravelUser\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=5.6.4",
+    "laravel/framework": "~5.3.0|~5.4.0",
+    "laravel/socialite": "^3.0",
+    "webmod/laravel-contact": "*",
+    "webmod/laravel-providers": "*",
+    "webmod/laravel-log": "*"
+  }
+}
