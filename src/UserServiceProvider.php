@@ -61,7 +61,7 @@ class UserServiceProvider extends ServiceProvider
     {
         $socialProviders = config('wm.user.social.providers', []);
 
-        View::composer('auth.login', function ($view) {
+        View::composer('auth.login', function ($view) use ($socialProviders) {
             $view->with(
                 'socialProviders',
                 SocialProvider::whereHas(
