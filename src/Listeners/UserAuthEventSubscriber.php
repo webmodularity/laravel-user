@@ -10,7 +10,7 @@ use WebModularity\LaravelUser\LogUser;
 
 class UserAuthEventSubscriber
 {
-    protected $request;
+    public $request;
 
     /**
      * Create the event listener.
@@ -20,12 +20,6 @@ class UserAuthEventSubscriber
     public function __construct(Request $request)
     {
         $this->request = $request;
-    }
-
-    public function getLogRequestId()
-    {
-        $logRequest = LogRequest::createFromRequest($this->request);
-        return !is_null($logRequest) ? $logRequest->id : null;
     }
 
     /**
@@ -38,7 +32,8 @@ class UserAuthEventSubscriber
         LogUser::create([
             'log_request_id' => $this->getLogRequestId(),
             'user_id' => $event->user->id,
-            'user_action' => LogUser::ACTION_LOGIN
+            'user_action' => LogUser::ACTION_LOGIN,
+            'social_provider_id' => $this->getSocialProviderId()
         ]);
     }
 
@@ -72,5 +67,16 @@ class UserAuthEventSubscriber
             'Illuminate\Auth\Events\Logout',
             'WebModularity\LaravelUser\Listeners\UserAuthEventSubscriber@onUserLogout'
         );
+    }
+
+    protected function getLogRequestId()
+    {
+        $logRequest = LogRequest::createFromRequest($this->request);
+        return !is_null($logRequest) ? $logRequest->id : null;
+    }
+
+    protected function getSocialProviderId()
+    {
+        return !is_null($this->request->socialProvider) ? $this->request->socialProvider->id : null;
     }
 }

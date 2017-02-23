@@ -4,17 +4,22 @@ namespace WebModularity\LaravelUser;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use WebModularity\LaravelLog\LogRequest;
+use WebModularity\LaravelProviders\SocialProvider;
+use WebModularity\LaravelUser\User;
 
 /**
  * WebModularity\LaravelUser\LogUser
  *
  * @property int $id
+ * @property int $user_action
  * @property int $log_request_id
  * @property int $user_id
- * @property int $user_action
+ * @property int $social_provider_id
  * @property string $created_at
- * @property-read \WebModularity\LaravelLog\LogRequest $logRequest
- * @property-read \WebModularity\LaravelUser\User $user
+ * @property-read LogRequest $logRequest
+ * @property-read User $user
+ * @property-read SocialProvider $socialProvider
  */
 
 class LogUser extends Model
@@ -30,7 +35,7 @@ class LogUser extends Model
      *
      * @var array
      */
-    protected $fillable = ['log_request_id', 'user_id', 'user_action'];
+    protected $fillable = ['user_action', 'log_request_id', 'user_id', 'social_provider_id'];
 
     protected static function boot()
     {
@@ -39,16 +44,24 @@ class LogUser extends Model
         static::addGlobalScope('withLogRequest', function (Builder $builder) {
             $builder->with(['logRequest']);
         });
+        static::addGlobalScope('withSocialProvider', function (Builder $builder) {
+            $builder->with(['socialProvider']);
+        });
     }
 
     public function logRequest()
     {
-        return $this->belongsTo('WebModularity\LaravelLog\LogRequest');
+        return $this->belongsTo(LogRequest::class);
     }
 
     public function user()
     {
-        return $this->belongsTo('WebModularity\LaravelUser\User');
+        return $this->belongsTo(User::class);
+    }
+
+    public function socialProvider()
+    {
+        return $this->belongsTo(SocialProvider::class);
     }
 
     public function scopeRecentLogins($query, $loginCount = 3)
@@ -58,15 +71,10 @@ class LogUser extends Model
             ->limit($loginCount);
     }
 
-    public function getLoginVia()
+    public function getVia()
     {
-        if ($this->user_action !== static::ACTION_LOGIN) {
-            return null;
-        }
-        $urlPath = $this->logRequest->urlPath->url_path;
-
-        if (substr($urlPath, 0, 13) == 'social/handle') {
-            return substr($urlPath, 14);
+        if (!is_null($this->socialProvider)) {
+            return $this->socialProvider->provider->name;
         }
 
         return 'web';
