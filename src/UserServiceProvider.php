@@ -14,6 +14,9 @@ class UserServiceProvider extends ServiceProvider
 {
     public function register()
     {
+        // Register LaravelSession Service Provider
+        $this->app->register('WebModularity\LaravelSession\SessionServiceProvider');
+
         // Register LaravelContact Service Provider
         $this->app->register('WebModularity\LaravelContact\ContactServiceProvider');
 
