@@ -4,13 +4,14 @@ namespace WebModularity\LaravelUser\Listeners;
 
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use WebModularity\LaravelLog\LogRequest;
 use WebModularity\LaravelUser\LogUser;
 
 class UserAuthEventSubscriber
 {
-    public $request;
+    protected $request;
 
     /**
      * Create the event listener.
@@ -52,12 +53,32 @@ class UserAuthEventSubscriber
     }
 
     /**
+     * Handle user register events
+     * @param Registered $event
+     * @return void
+     */
+    public function onUserRegister(Registered $event)
+    {
+        LogUser::create([
+            'log_request_id' => $this->getLogRequestId(),
+            'user_id' => $event->user->id,
+            'user_action' => LogUser::ACTION_REGISTER,
+            'social_provider_id' => $this->getSocialProviderId()
+        ]);
+    }
+
+    /**
      * Register the listeners for the subscriber.
      *
      * @param  \Illuminate\Events\Dispatcher  $events
      */
     public function subscribe($events)
     {
+        $events->listen(
+            'Illuminate\Auth\Events\Registered',
+            'WebModularity\LaravelUser\Listeners\UserAuthEventSubscriber@onUserRegister'
+        );
+
         $events->listen(
             'Illuminate\Auth\Events\Login',
             'WebModularity\LaravelUser\Listeners\UserAuthEventSubscriber@onUserLogin'
@@ -77,6 +98,6 @@ class UserAuthEventSubscriber
 
     protected function getSocialProviderId()
     {
-        return !is_null($this->request->socialProvider) ? $this->request->socialProvider->id : null;
+        return !empty($this->request->input('socialProvider')) ? $this->request->input('socialProvider')->id : null;
     }
 }
