@@ -59,7 +59,21 @@ class UserServiceProvider extends ServiceProvider
 
     protected function loadSocialLogins()
     {
-        if (count(config('wm.user.social.providers', [])) > 0) {
+        $socialProviders = config('wm.user.social.providers', []);
+
+        View::composer('auth.login', function ($view) {
+            $view->with(
+                'socialProviders',
+                SocialProvider::whereHas(
+                    'provider',
+                    function ($query) use ($socialProviders) {
+                        $query->whereIn('slug', $socialProviders);
+                    }
+                )->get()
+            );
+        });
+
+        if (count($socialProviders) > 0) {
             // Social Routes
             $this->loadRoutesFrom(__DIR__ . '/../routes/social.php');
             $this->app->make('router')->bind('socialProvider', function ($value) {
@@ -69,12 +83,6 @@ class UserServiceProvider extends ServiceProvider
             });
             $this->app->make('router')->aliasMiddleware('auth.social_provider', SocialProviderActive::class);
             $this->app->make('router')->aliasMiddleware('auth.social_login_only', SocialLoginOnly::class);
-
-            View::composer('auth.login', function ($view) {
-                $view->with('socialProviders', SocialProvider::whereHas('provider', function ($query) {
-                    $query->whereIn('slug', config('wm.user.social.providers', []));
-                })->get());
-            });
         }
     }
 }
