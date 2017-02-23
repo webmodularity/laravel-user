@@ -59,7 +59,7 @@ class UserServiceProvider extends ServiceProvider
 
     protected function loadSocialLogins()
     {
-        if (count(config('wm.auth.social.providers', [])) > 0) {
+        if (count(config('wm.user.social.providers', [])) > 0) {
             // Social Routes
             $this->loadRoutesFrom(__DIR__ . '/../routes/social.php');
             $this->app->make('router')->bind('socialProvider', function ($value) {
@@ -72,7 +72,7 @@ class UserServiceProvider extends ServiceProvider
 
             View::composer('auth.login', function ($view) {
                 $view->with('socialProviders', SocialProvider::whereHas('provider', function ($query) {
-                    $query->whereIn('slug', config('wm.auth.social.providers', []));
+                    $query->whereIn('slug', config('wm.user.social.providers', []));
                 })->get());
             });
         }

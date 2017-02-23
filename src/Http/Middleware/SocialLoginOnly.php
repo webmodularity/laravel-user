@@ -15,7 +15,7 @@ class SocialLoginOnly
      */
     public function handle($request, Closure $next)
     {
-        if (config('wm.auth.social.social_login_only', false)) {
+        if (config('wm.user.social.social_login_only', false)) {
             abort(404);
         }
 
