@@ -73,16 +73,14 @@ class UserServiceProvider extends ServiceProvider
             );
         });
 
-        if (count($socialProviders) > 0) {
-            // Social Routes
-            $this->loadRoutesFrom(__DIR__ . '/../routes/social.php');
-            $this->app->make('router')->bind('socialProvider', function ($value) {
-                return SocialProvider::whereHas('provider', function ($query) use ($value) {
-                    $query->where('slug', $value);
-                })->first();
-            });
-            $this->app->make('router')->aliasMiddleware('auth.social_provider', SocialProviderActive::class);
-            $this->app->make('router')->aliasMiddleware('auth.social_login_only', SocialLoginOnly::class);
-        }
+        // Social Routes
+        $this->loadRoutesFrom(__DIR__ . '/../routes/social.php');
+        $this->app->make('router')->bind('socialProvider', function ($value) {
+            return SocialProvider::whereHas('provider', function ($query) use ($value) {
+                $query->where('slug', $value);
+            })->first();
+        });
+        $this->app->make('router')->aliasMiddleware('auth.social_provider', SocialProviderActive::class);
+        $this->app->make('router')->aliasMiddleware('auth.social_login_only', SocialLoginOnly::class);
     }
 }
