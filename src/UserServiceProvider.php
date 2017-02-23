@@ -43,7 +43,7 @@ class UserServiceProvider extends ServiceProvider
         );
 
         // Config
-        $this->publishes([__DIR__ . '/../config/auth.php' => config_path('wm/auth.php')], 'config');
+        $this->publishes([__DIR__ . '/../config/user.php' => config_path('wm/user.php')], 'config');
 
         // Migrations
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
