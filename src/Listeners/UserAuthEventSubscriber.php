@@ -6,6 +6,7 @@ use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Http\Request;
 use WebModularity\LaravelLog\LogRequest;
+use WebModularity\LaravelUser\LogUser;
 
 class UserAuthEventSubscriber
 {
