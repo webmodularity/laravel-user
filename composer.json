@@ -23,6 +23,7 @@
     "laravel/socialite": "^3.0",
     "webmod/laravel-contact": "*",
     "webmod/laravel-providers": "*",
-    "webmod/laravel-log": "*"
+    "webmod/laravel-log": "*",
+    "webmod/laravel-session": "*"
   }
 }

@@ -8,7 +8,6 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use WebModularity\LaravelUser\Http\Middleware\SocialProviderActive;
 use WebModularity\LaravelUser\Http\Middleware\SocialLoginOnly;
-use WebModularity\LaravelSession\DatabaseSessionHandler;
 use WebModularity\LaravelProviders\SocialProvider;
 
 class UserServiceProvider extends ServiceProvider
@@ -34,7 +33,7 @@ class UserServiceProvider extends ServiceProvider
     public function boot(Dispatcher $events)
     {
         // User Auth Event Listener
-        $events->subscribe('WebModularity\LaravelUser\UserAuthEventSubscriber');
+        $events->subscribe('WebModularity\LaravelUser\Listeners\UserAuthEventSubscriber');
         $events->listen(
             'WebModularity\LaravelUser\Events\UserInvitationClaimed',
             'WebModularity\LaravelUser\Listeners\UserInvitationSetClaimedAt'
@@ -53,18 +52,6 @@ class UserServiceProvider extends ServiceProvider
 
         // Social Logins
         $this->loadSocialLogins();
-
-        // Session
-        $this->app->make('session')->extend('wm-database', function (Application $app) {
-            // Return implementation of SessionHandlerInterface...
-            $sessionConnection = $app->make('db')->connection(config('session.connection'));
-            return new DatabaseSessionHandler(
-                $sessionConnection,
-                config('session.table'),
-                config('session.lifetime'),
-                $app
-            );
-        });
     }
 
     protected function loadSocialLogins()
