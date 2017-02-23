@@ -54,13 +54,14 @@ class UserServiceProvider extends ServiceProvider
         });
 
         // Social Logins
-        $this->loadSocialLogins();
+        $socialProviders = config('wm.user.social.providers', []);
+        if (count($socialProviders) > 0) {
+            $this->loadSocialLogins();
+        }
     }
 
-    protected function loadSocialLogins()
+    protected function loadSocialLogins($socialProviders = [])
     {
-        $socialProviders = config('wm.user.social.providers', []);
-
         View::composer('auth.login', function ($view) use ($socialProviders) {
             $view->with(
                 'socialProviders',
