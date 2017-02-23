@@ -56,7 +56,7 @@ class UserServiceProvider extends ServiceProvider
         // Social Logins
         $socialProviders = config('wm.user.social.providers', []);
         if (count($socialProviders) > 0) {
-            $this->loadSocialLogins();
+            $this->loadSocialLogins($socialProviders);
         }
     }
 
