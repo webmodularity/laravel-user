@@ -25,14 +25,9 @@ trait RegistersSocialUsers
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse|null Returns null on failure
      */
-    protected function registerSocialUser(Request $request)
+    protected function registerSocialUser(SocialUser $socialUser, SocialProvider $socialProvider, Request $request)
     {
-        Debugbar::info("Registered social user!");
-        $socialUser = isset($request->socialUser) ? $request->socialUser : null;
-        $socialProvider = isset($request->socialProvider) ? $request->socialProvider : null;
-        Debugbar::info($socialUser);
-        Debugbar::info($socialProvider);
-        if (empty($socialUser) || empty($socialProvider)) {
+        if (is_null($socialUser) || is_null($socialProvider)) {
             return null;
         }
         // User Invitation
