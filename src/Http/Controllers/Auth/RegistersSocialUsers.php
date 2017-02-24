@@ -12,6 +12,7 @@ use WebModularity\LaravelUser\UserSocialProfile;
 use WebModularity\LaravelProviders\SocialProvider;
 use Laravel\Socialite\Contracts\User as SocialUser;
 use Auth;
+use DebugBar;
 
 /**
  * Class RegistersSocialUsers
