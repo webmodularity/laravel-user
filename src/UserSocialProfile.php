@@ -57,17 +57,17 @@ class UserSocialProfile extends Model
         $userSocialProfile = static::create([
             'user_id' => $user->id,
             'social_provider_id' => $socialProvider->id,
-            'uid' => $socialUser->id
+            'uid' => $socialUser->getId()
         ]);
         // Trigger event
         return $userSocialProfile;
     }
 
-    public static function findBySocialUser($socialUser, SocialProvider $socialProvider)
+    public static function findBySocialUser(SocialUser $socialUser, SocialProvider $socialProvider)
     {
         return static::where(
             [
-                ['uid', $socialUser->id],
+                ['uid', $socialUser->getId()],
                 ['social_provider_id', $socialProvider->id]
             ]
         )

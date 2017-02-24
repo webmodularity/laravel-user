@@ -6,7 +6,7 @@ use WebModularity\LaravelContact\Person;
 use WebModularity\LaravelUser\User;
 use Validator;
 
-trait RegisterUsers
+trait RegistersUsers
 {
     /**
      * Create a new user instance after a valid registration.

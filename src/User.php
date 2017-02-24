@@ -81,9 +81,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserSocialProfile::class);
     }
-
-    public static function createFromInvitation(UserInvitation $invitation, Person $person)
-    {
-
-    }
 }
