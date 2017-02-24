@@ -2,10 +2,7 @@
 
 namespace WebModularity\LaravelUser;
 
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Eloquent\Model;
-use WebModularity\LaravelUser\Events\UserInvitationClaimed;
-use WebModularity\LaravelContact\Person;
 use WebModularity\LaravelProviders\SocialProvider;
 use Laravel\Socialite\Contracts\User as SocialUser;
 
@@ -50,30 +47,31 @@ class UserSocialProfile extends Model
     }
 
     /**
-     * Attempt to create new UserSocialProfile and User from SocialUser data
+     * @param User $user
      * @param SocialProvider $socialProvider
      * @param SocialUser $socialUser
-     * @return Model
+     * @return mixed
      */
-
-    public static function createFromSocialUser(SocialProvider $socialProvider, SocialUser $socialUser)
+    public static function linkSocialProfile(User $user, SocialProvider $socialProvider, SocialUser $socialUser)
     {
+        $userSocialProfile = static::create([
+            'user_id' => $user->id,
+            'social_provider_id' => $socialProvider->id,
+            'uid' => $socialUser->id
+        ]);
+        // Trigger event
+        return $userSocialProfile;
+    }
 
-            $user = User::where('person_id', $person->id)->first();
-            if (is_null($user)) {
-            }
-
-            if (!is_null($user)) {
-                event(new UserInvitationClaimed($invitation, $user));
-                event(new Registered($user));
-                return static::create([
-                    'user_id' => $user->id,
-                    'social_provider_id' => $socialProvider->id,
-                    'uid' => $socialUser->id
-                ]);
-            }
-        }
-
-        return null;
+    public static function findBySocialUser($socialUser, SocialProvider $socialProvider)
+    {
+        return static::where(
+            [
+                ['uid', $socialUser->id],
+                ['social_provider_id', $socialProvider->id]
+            ]
+        )
+            ->with('user')
+            ->first();
     }
 }

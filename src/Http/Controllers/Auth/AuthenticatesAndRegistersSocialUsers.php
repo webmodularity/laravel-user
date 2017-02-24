@@ -2,9 +2,12 @@
 
 namespace WebModularity\LaravelUser\Http\Controllers\Auth;
 
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use WebModularity\LaravelContact\Person;
+use WebModularity\LaravelUser\Events\UserInvitationClaimed;
+use WebModularity\LaravelUser\User;
 use WebModularity\LaravelUser\UserInvitation;
 use WebModularity\LaravelUser\UserSocialProfile;
 use WebModularity\LaravelProviders\SocialProvider;
@@ -33,14 +36,7 @@ trait AuthenticatesAndRegistersSocialUsers
 
         // Attempt to log in the user associated to this social provider
         $socialUser = $socialite->driver($socialProvider->getSlug())->user();
-        $userSocialProfile = UserSocialProfile::where(
-            [
-                ['uid', $socialUser->id],
-                ['social_provider_id', $socialProvider->id]
-            ]
-        )
-            ->with('user')
-            ->first();
+        $userSocialProfile = UserSocialProfile::findBySocialUser($socialUser, $socialProvider);
 
         if (!is_null($userSocialProfile)) {
             $this->socialUserGuard()->login($userSocialProfile->user, false);
@@ -53,9 +49,7 @@ trait AuthenticatesAndRegistersSocialUsers
         $this->incrementLoginAttempts($request);
 
         // Attempt to register user
-        $this->registerSocialUser($request);
-
-        return $this->sendFailedSocialUserLoginResponse($request);
+        return $this->registerSocialUser($request);
     }
 
     /**
@@ -66,31 +60,52 @@ trait AuthenticatesAndRegistersSocialUsers
      */
     protected function registerSocialUser(Request $request)
     {
-        $socialProvider = $request->socialProvider;
         $socialUser = $request->socialUser;
-        $person = $this->getPersonFromSocialUser($socialProvider, $socialUser);
-        $invitations = UserInvitation::findInvitations($person, $socialProvider);
+        $socialProvider = $request->socialProvider;
+        // User Invitation
+        $invitation = $this->getUserInvitationFromSocialUser($socialUser, $socialProvider);
+        if (is_null($invitation)) {
+            // No invitations found to register this user
+            return $this->sendFailedSocialUserLoginResponse($request);
+        }
+        // User
+        $user = $this->getUserFromInvitation($socialUser, $socialProvider, $invitation);
+        $userSocialProfile = UserSocialProfile::linkSocialProfile($user, $socialProvider, $socialUser);
+        // trigger link-social event
 
-        // Register New User via Social
-        $user = User::firstOrCreate(
-            ['person_id' => $person->id],
-            [
-                'role_id' => $invitation->role_id,
-                'avatar_url' => static::getAvatarFromSocial($socialProvider, $socialUser),
-                'status' => $invitation->status
-            ]
-        );
-
-        $this->validator($request->all())->validate();
-        event(new Registered($user = $this->create($request->all())));
-        $this->guard()->login($user);
-        return $this->registered($request, $user)
+        // Login
+        $this->socialUserGuard()->login($user);
+        return $this->socialUserRegistered($request, $user)
             ?: redirect($this->redirectPath());
     }
 
-    protected function getPersonFromSocialUser(SocialProvider $socialProvider, SocialUser $socialUser)
+    protected function getUserFromInvitation(
+        SocialUser $socialUser,
+        SocialProvider $socialProvider,
+        UserInvitation $invitation
+    ) {
+        // Person
+        $person = $this->getPersonFromSocialUser($socialUser, $socialProvider);
+
+        $user = User::where('person_id', $person->id)->first();
+        if (is_null($user)) {
+            $user = User::create(
+                [
+                    'person_id' => $person->id,
+                    'role_id' => $invitation->role_id,
+                    'avatar_url' => $socialProvider->getAvatarFromSocial($socialUser),
+                    'status' => $invitation->status
+                ]
+            );
+            event(new Registered($user));
+        }
+        return $user;
+    }
+
+    protected function getPersonFromSocialUser(SocialUser $socialUser, SocialProvider $socialProvider)
     {
         $person = Person::where('email', $socialUser->email)->first();
+
         $personName = !is_null($socialProvider->getPersonNameFromSocialUser($socialUser))
             ? $socialProvider->getPersonNameFromSocialUser($socialUser)
             : Person::splitFullName($socialUser->getName());
@@ -108,6 +123,16 @@ trait AuthenticatesAndRegistersSocialUsers
             return $person->updateIfNull('first_name', $personName['firstName'])
                 ->updateIfNull('last_name', $personName['lastName']);
         }
+    }
+
+    protected function getUserInvitationFromSocialUser($socialUser, $socialProvider)
+    {
+        $invitations = UserInvitation::findInvitations($socialUser->email, $socialProvider->id);
+        dd($invitations);
+        // pick best invitation
+        //event(new UserInvitationClaimed($invitation));
+
+        return null;
     }
 
     /**
@@ -146,5 +171,17 @@ trait AuthenticatesAndRegistersSocialUsers
     protected function socialUserGuard()
     {
         return Auth::guard();
+    }
+
+    /**
+     * The user has been registered.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
+    protected function socialUserRegistered(Request $request, $user)
+    {
+        //
     }
 }

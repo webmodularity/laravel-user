@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use WebModularity\LaravelContact\Person;
-use WebModularity\LaravelProviders\SocialProvider;
 
 /**
  * WebModularity\LaravelUser\UserInvitation
@@ -85,14 +84,15 @@ class UserInvitation extends Model
 
     /**
      * Finds all active invitations matching passed parameters.
-     * @param Person|null $person
-     * @param SocialProvider|null $socialProvider
+     * @param string|null $email
+     * @param int|null $socialProviderId
      * @return Collection|null
      */
-    public static function findInvitations(Person $person = null, SocialProvider $socialProvider = null)
+    public static function findInvitations($email = null, $socialProviderId = null)
     {
         $query = static::notClaimed()
-            ->notExpired();
+            ->notExpired()
+            ->with('person');
 
         if (is_null($socialProvider)) {
             $query->whereNull('social_provider_id');
@@ -100,12 +100,14 @@ class UserInvitation extends Model
             $query->where('social_provider_id', $socialProvider->id);
         }
 
-        if (is_null($person)) {
+        if (is_null($email)) {
             return $query->whereNull('person_id')->get();
         } else {
-            return $query->where(function ($query) {
+            return $query->where(function ($query) use ($email) {
                 $query->whereNull('person_id')
-                    ->orWhere('person_id', $person->id);
+                    ->whereHas('person', function ($query) use ($email) {
+                        $query->where('email', $email);
+                    });
             })->get();
         }
     }
