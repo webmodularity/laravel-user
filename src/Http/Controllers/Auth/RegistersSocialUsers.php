@@ -27,8 +27,11 @@ trait RegistersSocialUsers
      */
     protected function registerSocialUser(Request $request)
     {
+        DebugBar::info("Registered social user!");
         $socialUser = isset($request->socialUser) ? $request->socialUser : null;
         $socialProvider = isset($request->socialProvider) ? $request->socialProvider : null;
+        DebugBar::info($socialUser);
+        DebugBar::info($socialProvider);
         if (empty($socialUser) || empty($socialProvider)) {
             return null;
         }
