@@ -49,7 +49,8 @@ trait AuthenticatesUsersAndSocialUsers
         $this->incrementLoginAttempts($request);
 
         // Try and register new user before sending failed response.
-        return $this->registerSocialUser($socialUser, $request) ?: $this->sendFailedSocialUserLoginResponse($request);
+        return $this->registerSocialUser($socialUser, $socialProvider, $request)
+            ?: $this->sendFailedSocialUserLoginResponse($request);
     }
 
     /**
