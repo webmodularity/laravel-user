@@ -5,7 +5,7 @@ namespace WebModularity\LaravelUser\Listeners;
 use Carbon\Carbon;
 use WebModularity\LaravelUser\Events\UserInvitationClaimed;
 
-class UserInvitationSetClaimedAt
+class LogUserInvitationClaimed
 {
 
     /**

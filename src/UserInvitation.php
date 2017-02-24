@@ -3,7 +3,10 @@
 namespace WebModularity\LaravelUser;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
+use WebModularity\LaravelContact\Person;
 use WebModularity\LaravelProviders\SocialProvider;
 
 /**
@@ -20,8 +23,8 @@ use WebModularity\LaravelProviders\SocialProvider;
  * @property-read \WebModularity\LaravelContact\Person $person
  * @property-read \WebModularity\LaravelUser\Role $role
  * @property-read \WebModularity\LaravelProviders\SocialProvider $socialProvider
- * @method static \Illuminate\Database\Query\Builder|\WebModularity\LaravelUser\UserInvitation notClaimed()
- * @method static \Illuminate\Database\Query\Builder|\WebModularity\LaravelUser\UserInvitation notExpired()
+ * @method static Builder|UserInvitation notClaimed()
+ * @method static Builder|UserInvitation notExpired()
  */
 
 class UserInvitation extends Model
@@ -48,7 +51,7 @@ class UserInvitation extends Model
      */
     public function person()
     {
-        return $this->belongsTo('WebModularity\LaravelContact\Person');
+        return $this->belongsTo(Person::class);
     }
 
     /**
@@ -56,7 +59,7 @@ class UserInvitation extends Model
      */
     public function role()
     {
-        return $this->belongsTo('WebModularity\LaravelUser\Role');
+        return $this->belongsTo(Role::class);
     }
 
     /**
@@ -81,42 +84,46 @@ class UserInvitation extends Model
     }
 
     /**
-     *
-     * @param SocialProvider $socialProvider
-     * @param string $email
-     * @return Model|null
+     * Finds all active invitations matching passed parameters.
+     * @param Person|null $person
+     * @param SocialProvider|null $socialProvider
+     * @return Collection|null
      */
-
-    public static function firstFromSocial(SocialProvider $socialProvider, $email = null)
+    public static function findInvitations(Person $person = null, SocialProvider $socialProvider = null)
     {
-        if (!is_null($socialProvider) && $socialProvider->authIsActive()) {
-            if (!empty($email)) {
-                $emailInvitation = static::where('social_provider_id', $socialProvider->id)
-                    ->notClaimed()
-                    ->notExpired()
-                    ->with('person')
-                    ->whereHas('person', function ($query) use ($email) {
-                        $query->where('email', $email);
-                    })
-                    ->first();
+        $query = static::notClaimed()
+            ->notExpired();
 
-                if (!is_null($emailInvitation)) {
-                    return $emailInvitation;
-                }
-            }
-
-            return static::where(
-                [
-                    ['social_provider_id', $socialProvider->id],
-                    ['person_id', null]
-                ]
-            )
-                ->notClaimed()
-                ->notExpired()
-                ->with('person')
-                ->first();
+        if (is_null($socialProvider)) {
+            $query->whereNull('social_provider_id');
+        } else {
+            $query->where('social_provider_id', $socialProvider->id);
         }
 
-        return null;
+        if (is_null($person)) {
+            return $query->whereNull('person_id')->get();
+        } else {
+            return $query->where(function ($query) {
+                $query->whereNull('person_id')
+                    ->orWhere('person_id', $person->id);
+            })->get();
+        }
+    }
+
+    /**
+     * Finds an invitation record matching the provided inviteKey or null if no records match.
+     * @param string $inviteKey
+     * @return static|null
+     */
+    public static function findInvitationByKey($inviteKey)
+    {
+        if (empty($inviteKey) || !is_string($inviteKey) || strlen($inviteKey) > 255) {
+            return null;
+        }
+
+        return static::where(['invite_key', $inviteKey])
+            ->notClaimed()
+            ->notExpired()
+            ->first();
     }
 }

@@ -5,6 +5,9 @@ namespace WebModularity\LaravelUser;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
+use WebModularity\LaravelContact\Person;
+use WebModularity\LaravelUser\Role;
+use WebModularity\LaravelUser\UserSocialProfile;
 
 /**
  * WebModularity\LaravelUser\User
@@ -20,9 +23,9 @@ use Illuminate\Database\Eloquent\Builder;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @property-read \WebModularity\LaravelContact\Person $person
- * @property-read \WebModularity\LaravelUser\Role $role
- * @property-read \Illuminate\Database\Eloquent\Collection|\WebModularity\LaravelUser\UserSocialProfile[] $userSocialProfiles
+ * @property-read Person $person
+ * @property-read Role $role
+ * @property-read \Illuminate\Database\Eloquent\Collection|UserSocialProfile[] $userSocialProfiles
  */
 class User extends Authenticatable
 {
@@ -60,7 +63,7 @@ class User extends Authenticatable
      */
     public function person()
     {
-        return $this->belongsTo('WebModularity\LaravelContact\Person');
+        return $this->belongsTo(Person::class);
     }
 
     /**
@@ -68,7 +71,7 @@ class User extends Authenticatable
      */
     public function role()
     {
-        return $this->belongsTo('WebModularity\LaravelUser\Role');
+        return $this->belongsTo(Role::class);
     }
 
     /**
@@ -76,6 +79,11 @@ class User extends Authenticatable
      */
     public function userSocialProfiles()
     {
-        return $this->hasMany('WebModularity\LaravelUser\UserSocialProfile');
+        return $this->hasMany(UserSocialProfile::class);
+    }
+
+    public static function createFromInvitation(UserInvitation $invitation, Person $person)
+    {
+
     }
 }
