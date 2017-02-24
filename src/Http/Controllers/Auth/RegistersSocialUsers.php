@@ -57,7 +57,7 @@ trait RegistersSocialUsers
     protected function getUserInvitationFromSocialUser(SocialUser $socialUser, SocialProvider $socialProvider)
     {
         $invitations = UserInvitation::findInvitations($socialUser->getEmail(), $socialProvider);
-        dd($invitations);
+        Debugbar::info($invitations);
         // pick best invitation
 
         return null;
