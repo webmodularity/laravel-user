@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use WebModularity\LaravelContact\Person;
+use WebModularity\LaravelProviders\SocialProvider;
 
 /**
  * WebModularity\LaravelUser\UserInvitation
@@ -85,10 +86,10 @@ class UserInvitation extends Model
     /**
      * Finds all active invitations matching passed parameters.
      * @param string|null $email
-     * @param int|null $socialProviderId
+     * @param SocialProvider|null $socialProvider
      * @return Collection|null
      */
-    public static function findInvitations($email = null, $socialProviderId = null)
+    public static function findInvitations($email = null, $socialProvider = null)
     {
         $query = static::notClaimed()
             ->notExpired()

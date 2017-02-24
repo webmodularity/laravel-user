@@ -127,7 +127,7 @@ trait AuthenticatesAndRegistersSocialUsers
 
     protected function getUserInvitationFromSocialUser($socialUser, $socialProvider)
     {
-        $invitations = UserInvitation::findInvitations($socialUser->email, $socialProvider->id);
+        $invitations = UserInvitation::findInvitations($socialUser->email, $socialProvider);
         dd($invitations);
         // pick best invitation
         //event(new UserInvitationClaimed($invitation));
