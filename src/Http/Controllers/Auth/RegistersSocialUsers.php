@@ -2,7 +2,6 @@
 
 namespace WebModularity\LaravelUser\Http\Controllers\Auth;
 
-use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 use WebModularity\LaravelContact\Person;
@@ -12,6 +11,7 @@ use WebModularity\LaravelUser\UserInvitation;
 use WebModularity\LaravelUser\UserSocialProfile;
 use WebModularity\LaravelProviders\SocialProvider;
 use Laravel\Socialite\Contracts\User as SocialUser;
+use Auth;
 
 /**
  * Class RegistersSocialUsers
@@ -19,8 +19,6 @@ use Laravel\Socialite\Contracts\User as SocialUser;
  */
 trait RegistersSocialUsers
 {
-    use RegistersUsers;
-
     /**
      * Handle a registration request for provided social user.
      * @param  \Illuminate\Http\Request $request
@@ -46,7 +44,7 @@ trait RegistersSocialUsers
         // trigger link-social event
 
         // Login
-        $this->guard()->login($user);
+        $this->socialUserGuard()->login($user);
         return $this->registered($request, $user) ?: redirect($this->redirectPath());
     }
 
@@ -135,5 +133,26 @@ trait RegistersSocialUsers
             return response()->json($errors, 422);
         }
         return redirect()->back()->with('social_login_error', 'No social user found.');
+    }
+
+    /**
+     * Get the guard to be used during registration.
+     *
+     * @return \Illuminate\Contracts\Auth\StatefulGuard
+     */
+    protected function socialUserGuard()
+    {
+        return Auth::guard();
+    }
+
+    /**
+     * The user has been registered.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     */
+    protected function registered(Request $request, $user)
+    {
+        //
     }
 }
