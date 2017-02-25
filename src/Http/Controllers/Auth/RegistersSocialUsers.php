@@ -164,9 +164,10 @@ trait RegistersSocialUsers
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  mixed  $user
+     * @return null
      */
     protected function registered(Request $request, $user)
     {
-        //
+        return null;
     }
 }
