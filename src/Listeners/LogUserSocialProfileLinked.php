@@ -2,11 +2,10 @@
 
 namespace WebModularity\LaravelUser\Listeners;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use WebModularity\LaravelUser\Events\UserSocialProfileLinked;
-use WebModularity\LaravelUser\UserSocialProfile;
 use WebModularity\LaravelUser\LogUser;
+use WebModularity\LaravelLog\LogRequest;
 
 class LogUserSocialProfileLinked
 {
