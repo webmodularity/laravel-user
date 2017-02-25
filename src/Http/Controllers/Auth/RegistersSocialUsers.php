@@ -6,13 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 use WebModularity\LaravelContact\Person;
 use WebModularity\LaravelUser\Events\UserInvitationClaimed;
+use WebModularity\LaravelUser\Events\UserSocialProfileLinked;
 use WebModularity\LaravelUser\User;
 use WebModularity\LaravelUser\UserInvitation;
 use WebModularity\LaravelUser\UserSocialProfile;
 use WebModularity\LaravelProviders\SocialProvider;
 use Laravel\Socialite\Contracts\User as SocialUser;
 use Auth;
-use Debugbar;
 
 /**
  * Class RegistersSocialUsers
@@ -21,9 +21,11 @@ use Debugbar;
 trait RegistersSocialUsers
 {
     /**
-     * Handle a registration request for provided social user.
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse|null Returns null on failure
+     * Method called from (failed) social user login attempt
+     * @param SocialUser $socialUser
+     * @param SocialProvider $socialProvider
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|null
      */
     protected function registerSocialUser(SocialUser $socialUser, SocialProvider $socialProvider, Request $request)
     {
@@ -39,8 +41,13 @@ trait RegistersSocialUsers
         event(new UserInvitationClaimed($invitation));
         // User
         $user = $this->getUserFromInvitation($socialUser, $socialProvider, $invitation);
-        $userSocialProfile = UserSocialProfile::linkSocialProfile($user, $socialProvider, $socialUser);
-        // trigger link-social event
+        // Link User to SocialProvider
+        $userSocialProfile = UserSocialProfile::create([
+            'user_id' => $user->id,
+            'social_provider_id' => $socialProvider->id,
+            'uid' => $socialUser->getId()
+        ]);
+        event(new UserSocialProfileLinked($userSocialProfile));
 
         // Login
         $this->socialUserGuard()->login($user);

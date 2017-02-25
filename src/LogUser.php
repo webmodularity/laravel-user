@@ -29,6 +29,7 @@ class LogUser extends Model
     const ACTION_LOGIN = 1;
     const ACTION_LOGOUT = 2;
     const ACTION_REGISTER = 3;
+    const ACTION_LINK_SOCIAL = 4;
 
     /**
      * The attributes that are mass assignable.

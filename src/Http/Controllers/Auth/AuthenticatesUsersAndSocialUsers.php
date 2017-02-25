@@ -36,7 +36,14 @@ trait AuthenticatesUsersAndSocialUsers
 
         // Attempt to log in the user associated to this social provider
         $socialUser = $socialite->driver($socialProvider->getSlug())->user();
-        $userSocialProfile = UserSocialProfile::findBySocialUser($socialUser, $socialProvider);
+        $userSocialProfile = UserSocialProfile::where(
+            [
+                ['uid', $socialUser->getId()],
+                ['social_provider_id', $socialProvider->id]
+            ]
+        )
+            ->with('user')
+            ->first();
 
         if (!is_null($userSocialProfile)) {
             $this->guard()->login($userSocialProfile->user, false);

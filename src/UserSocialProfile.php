@@ -4,7 +4,6 @@ namespace WebModularity\LaravelUser;
 
 use Illuminate\Database\Eloquent\Model;
 use WebModularity\LaravelProviders\SocialProvider;
-use Laravel\Socialite\Contracts\User as SocialUser;
 
 /**
  * WebModularity\LaravelUser\UserSocialProfile
@@ -44,34 +43,5 @@ class UserSocialProfile extends Model
     public function socialProvider()
     {
         return $this->belongsTo(SocialProvider::class);
-    }
-
-    /**
-     * @param User $user
-     * @param SocialProvider $socialProvider
-     * @param SocialUser $socialUser
-     * @return mixed
-     */
-    public static function linkSocialProfile(User $user, SocialProvider $socialProvider, SocialUser $socialUser)
-    {
-        $userSocialProfile = static::create([
-            'user_id' => $user->id,
-            'social_provider_id' => $socialProvider->id,
-            'uid' => $socialUser->getId()
-        ]);
-        // Trigger event
-        return $userSocialProfile;
-    }
-
-    public static function findBySocialUser(SocialUser $socialUser, SocialProvider $socialProvider)
-    {
-        return static::where(
-            [
-                ['uid', $socialUser->getId()],
-                ['social_provider_id', $socialProvider->id]
-            ]
-        )
-            ->with('user')
-            ->first();
     }
 }
