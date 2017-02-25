@@ -57,8 +57,15 @@ trait RegistersSocialUsers
     {
         $person = Person::where('email', $socialUser->getEmail())->first();
         $invitations = UserInvitation::findInvitations($person, $socialProvider);
-        Debugbar::info($invitations);
-        // pick best invitation
+
+        if ($invitations->count() == 1) {
+            return $invitations->first();
+        } elseif ($invitations->count() > 1) {
+            $index = $invitations->search(function ($item, $key) {
+                return $item->person_id > 0;
+            });
+            return $invitations[$index] ?: null;
+        }
 
         return null;
     }
