@@ -5,6 +5,10 @@ namespace WebModularity\LaravelUser\Events;
 use Illuminate\Queue\SerializesModels;
 use WebModularity\LaravelUser\UserSocialProfile;
 
+/**
+ * Class UserSocialProfileLinked
+ * @package WebModularity\LaravelUser\Events
+ */
 class UserSocialProfileLinked
 {
     use SerializesModels;
