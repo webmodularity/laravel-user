@@ -104,7 +104,7 @@ class UserInvitation extends Model
         if (is_null($person)) {
             return $query->whereNull('person_id')->get();
         } else {
-            return $query->where(function ($query) use ($email) {
+            return $query->where(function ($query) use ($person) {
                 $query->whereNull('person_id')
                     ->orWhere('person_id', $person->id);
             })->get();
