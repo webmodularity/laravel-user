@@ -65,7 +65,7 @@ class UserServiceProvider extends ServiceProvider
         }
     }
 
-    protected function loadSocialLogins($socialProviders = [], Dispatcher $events)
+    protected function loadSocialLogins($socialProviders, Dispatcher $events)
     {
         // Events
         $events->listen(
