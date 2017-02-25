@@ -85,11 +85,11 @@ class UserInvitation extends Model
 
     /**
      * Finds all active invitations matching passed parameters.
-     * @param string|null $email
+     * @param Person|null $person
      * @param SocialProvider|null $socialProvider
      * @return Collection|null
      */
-    public static function findInvitations($email = null, $socialProvider = null)
+    public static function findInvitations(Person $person = null, $socialProvider = null)
     {
         $query = static::notClaimed()
             ->notExpired()
@@ -101,14 +101,12 @@ class UserInvitation extends Model
             $query->where('social_provider_id', $socialProvider->id);
         }
 
-        if (is_null($email)) {
+        if (is_null($person)) {
             return $query->whereNull('person_id')->get();
         } else {
             return $query->where(function ($query) use ($email) {
                 $query->whereNull('person_id')
-                    ->whereHas('person', function ($query) use ($email) {
-                        $query->where('email', $email);
-                    });
+                    ->orWhere('person_id', $person->id);
             })->get();
         }
     }
