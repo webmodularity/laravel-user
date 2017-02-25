@@ -6,9 +6,12 @@ use View;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use WebModularity\LaravelUser\Events\UserInvitationClaimed;
 use WebModularity\LaravelUser\Http\Middleware\SocialProviderActive;
 use WebModularity\LaravelUser\Http\Middleware\SocialLoginOnly;
 use WebModularity\LaravelProviders\SocialProvider;
+use WebModularity\LaravelUser\Listeners\LogUserInvitationClaimed;
+use WebModularity\LaravelUser\Listeners\UserAuthEventSubscriber;
 
 class UserServiceProvider extends ServiceProvider
 {
@@ -36,10 +39,10 @@ class UserServiceProvider extends ServiceProvider
     public function boot(Dispatcher $events)
     {
         // User Auth Event Listener
-        $events->subscribe('WebModularity\LaravelUser\Listeners\UserAuthEventSubscriber');
+        $events->subscribe(UserAuthEventSubscriber::class);
         $events->listen(
-            'WebModularity\LaravelUser\Events\UserInvitationClaimed',
-            'WebModularity\LaravelUser\Listeners\UserInvitationSetClaimedAt'
+            UserInvitationClaimed::class,
+            LogUserInvitationClaimed::class
         );
 
         // Config
