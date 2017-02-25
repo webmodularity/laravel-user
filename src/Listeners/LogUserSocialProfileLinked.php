@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use WebModularity\LaravelUser\Events\UserSocialProfileLinked;
 use WebModularity\LaravelUser\LogUser;
 use WebModularity\LaravelLog\LogRequest;
-use Debugbar;
 
 /**
  * Class LogUserSocialProfileLinked
@@ -34,7 +33,6 @@ class LogUserSocialProfileLinked
     {
         $userSocialProfile = $event->userSocialProfile;
         $logRequest = LogRequest::createFromRequest($this->request);
-        Debugbar::info($logRequest);
 
         LogUser::create([
             'log_request_id' => $logRequest->id,
