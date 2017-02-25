@@ -7,10 +7,12 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use WebModularity\LaravelUser\Events\UserInvitationClaimed;
+use WebModularity\LaravelUser\Events\UserSocialProfileLinked;
 use WebModularity\LaravelUser\Http\Middleware\SocialProviderActive;
 use WebModularity\LaravelUser\Http\Middleware\SocialLoginOnly;
 use WebModularity\LaravelProviders\SocialProvider;
 use WebModularity\LaravelUser\Listeners\LogUserInvitationClaimed;
+use WebModularity\LaravelUser\Listeners\LogUserSocialProfileLinked;
 use WebModularity\LaravelUser\Listeners\UserAuthEventSubscriber;
 
 class UserServiceProvider extends ServiceProvider
@@ -59,12 +61,18 @@ class UserServiceProvider extends ServiceProvider
         // Social Logins
         $socialProviders = config('wm.user.social.providers', []);
         if (count($socialProviders) > 0) {
-            $this->loadSocialLogins($socialProviders);
+            $this->loadSocialLogins($socialProviders, $events);
         }
     }
 
-    protected function loadSocialLogins($socialProviders = [])
+    protected function loadSocialLogins($socialProviders = [], Dispatcher $events)
     {
+        // Events
+        $events->listen(
+            UserSocialProfileLinked::class,
+            LogUserSocialProfileLinked::class
+        );
+
         View::composer('auth.login', function ($view) use ($socialProviders) {
             $view->with(
                 'socialProviders',
