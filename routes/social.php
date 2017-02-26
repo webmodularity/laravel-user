@@ -7,5 +7,5 @@ Route::group(['middleware' => ['web', 'auth.social_provider']], function () {
     Route::get('social/{socialProvider}', function (SocialProvider $socialProvider, Socialite $socialite) {
         return $socialite->driver($socialProvider->getSlug())->redirect();
     });
-    Route::get('social/handle/{socialProvider}', "Auth\LoginController@loginSocialUser");
+    Route::get('social/handle/{socialProvider}', "App\Http\Controllers\Auth\LoginController@loginSocialUser");
 });
