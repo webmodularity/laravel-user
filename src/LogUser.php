@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use WebModularity\LaravelLog\LogRequest;
 use WebModularity\LaravelProviders\SocialProvider;
-use WebModularity\LaravelUser\User;
+use Carbon\Carbon;
 
 /**
  * WebModularity\LaravelUser\LogUser
@@ -65,11 +65,14 @@ class LogUser extends Model
         return $this->belongsTo(SocialProvider::class);
     }
 
-    public function scopeRecentLogins($query, $loginCount = 3)
+    public function scopeLogins($query, $loginCount = 3)
     {
-        return $query->where('user_action', static::ACTION_LOGIN)
-            ->latest()
-            ->limit($loginCount);
+        return $query->where('user_action', static::ACTION_LOGIN);
+    }
+
+    public function scopeRecentDays($query, $days = 30)
+    {
+        return $query->where('created_at', '>=', Carbon::now()->subDays($days));
     }
 
     public function getVia()
