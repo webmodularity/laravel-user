@@ -3,7 +3,6 @@
 namespace WebModularity\LaravelUser;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use WebModularity\LaravelLog\LogRequest;
 use WebModularity\LaravelProviders\SocialProvider;
 use Carbon\Carbon;
@@ -37,18 +36,6 @@ class LogUser extends Model
      * @var array
      */
     protected $fillable = ['user_action', 'log_request_id', 'user_id', 'social_provider_id'];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::addGlobalScope('withLogRequest', function (Builder $builder) {
-            $builder->with(['logRequest']);
-        });
-        static::addGlobalScope('withSocialProvider', function (Builder $builder) {
-            $builder->with(['socialProvider']);
-        });
-    }
 
     public function logRequest()
     {
