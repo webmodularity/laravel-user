@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use WebModularity\LaravelLog\LogRequest;
 use WebModularity\LaravelUser\LogUser;
+use WebModularity\LaravelUser\LogUserAction;
 
 class UserAuthEventSubscriber
 {
@@ -31,9 +32,9 @@ class UserAuthEventSubscriber
     public function onUserLogin(Login $event)
     {
         LogUser::create([
-            'log_request_id' => $this->getLogRequestId(),
+            'log_request_id' => LogRequest::createFromRequest($this->request)->id,
             'user_id' => $event->user->id,
-            'user_action' => LogUser::ACTION_LOGIN,
+            'user_action_id' => LogUserAction::where('action', 'Login')->first()->id,
             'social_provider_id' => $this->getSocialProviderId()
         ]);
     }
@@ -46,9 +47,9 @@ class UserAuthEventSubscriber
     public function onUserLogout(Logout $event)
     {
         LogUser::create([
-            'log_request_id' => $this->getLogRequestId(),
+            'log_request_id' => LogRequest::createFromRequest($this->request)->id,
             'user_id' => $event->user->id,
-            'user_action' => LogUser::ACTION_LOGOUT
+            'user_action_id' => LogUserAction::where('action', 'Logout')->first()->id,
         ]);
     }
 
@@ -60,9 +61,9 @@ class UserAuthEventSubscriber
     public function onUserRegister(Registered $event)
     {
         LogUser::create([
-            'log_request_id' => $this->getLogRequestId(),
+            'log_request_id' => LogRequest::createFromRequest($this->request)->id,
             'user_id' => $event->user->id,
-            'user_action' => LogUser::ACTION_REGISTER,
+            'user_action_id' => LogUserAction::where('action', 'Register')->first()->id,
             'social_provider_id' => $this->getSocialProviderId()
         ]);
     }
@@ -88,12 +89,6 @@ class UserAuthEventSubscriber
             'Illuminate\Auth\Events\Logout',
             'WebModularity\LaravelUser\Listeners\UserAuthEventSubscriber@onUserLogout'
         );
-    }
-
-    protected function getLogRequestId()
-    {
-        $logRequest = LogRequest::createFromRequest($this->request);
-        return !is_null($logRequest) ? $logRequest->id : null;
     }
 
     protected function getSocialProviderId()

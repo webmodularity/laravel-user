@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use WebModularity\LaravelUser\Events\UserSocialProfileLinked;
 use WebModularity\LaravelUser\LogUser;
 use WebModularity\LaravelLog\LogRequest;
+use WebModularity\LaravelUser\LogUserAction;
 
 /**
  * Class LogUserSocialProfileLinked
@@ -37,7 +38,7 @@ class LogUserSocialProfileLinked
         LogUser::create([
             'log_request_id' => $logRequest->id,
             'user_id' => $userSocialProfile->user_id,
-            'user_action' => LogUser::ACTION_LINK_SOCIAL,
+            'user_action_id' => LogUserAction::where('action', 'Link Social')->first()->id,
             'social_provider_id' => $userSocialProfile->social_provider_id
         ]);
     }
