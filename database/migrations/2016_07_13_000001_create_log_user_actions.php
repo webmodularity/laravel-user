@@ -18,7 +18,7 @@ class CreateLogUserActions extends Migration
             $table->string('action', 255)->unique();
         });
 
-        foreach (['Login', 'Logout', 'Register', 'Link Social', 'Change Password', 'Delete', 'Lockout', 'Failed Login'] as $action) {
+        foreach (['Login', 'Logout', 'Register', 'Link Social', 'Unlink Social', 'Change Password', 'Delete', 'Lockout', 'Failed Login'] as $action) {
             LogUserAction::create(['action' => $action]);
         }
     }
