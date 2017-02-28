@@ -55,7 +55,9 @@ class LogUser extends Model
 
     public function scopeLogins($query, $loginCount = 3)
     {
-        return $query->where('user_action', static::ACTION_LOGIN);
+        return $query->whereHas('userAction', function ($query) {
+            $query->where('action', 'Login');
+        });
     }
 
     public function scopeRecentDays($query, $days = 30)
