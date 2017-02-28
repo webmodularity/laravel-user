@@ -11,11 +11,12 @@ use Carbon\Carbon;
  * WebModularity\LaravelUser\LogUser
  *
  * @property int $id
- * @property int $user_action
+ * @property int $user_action_id
  * @property int $log_request_id
  * @property int $user_id
  * @property int $social_provider_id
  * @property string $created_at
+ * @property-read LogUserAction $userAction
  * @property-read LogRequest $logRequest
  * @property-read User $user
  * @property-read SocialProvider $socialProvider
@@ -25,21 +26,21 @@ class LogUser extends Model
 {
     const UPDATED_AT = null;
 
-    const ACTION_LOGIN = 1;
-    const ACTION_LOGOUT = 2;
-    const ACTION_REGISTER = 3;
-    const ACTION_LINK_SOCIAL = 4;
-
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['user_action', 'log_request_id', 'user_id', 'social_provider_id'];
+    protected $fillable = ['user_action_id', 'log_request_id', 'user_id', 'social_provider_id'];
 
     public function logRequest()
     {
         return $this->belongsTo(LogRequest::class);
+    }
+
+    public function userAction()
+    {
+        return $this->belongsTo(LogUserAction::class);
     }
 
     public function user()
@@ -69,20 +70,5 @@ class LogUser extends Model
         }
 
         return 'web';
-    }
-
-    public function getActionName()
-    {
-        if ($this->user_action == LogUser::ACTION_LOGIN) {
-            return 'Login';
-        } elseif ($this->user_action == LogUser::ACTION_LOGOUT) {
-            return 'Logout';
-        } elseif ($this->user_action == LogUser::ACTION_REGISTER) {
-            return 'Register';
-        } elseif ($this->user_action == LogUser::ACTION_LINK_SOCIAL) {
-            return 'Link Social';
-        } else {
-            return 'N/A';
-        }
     }
 }
