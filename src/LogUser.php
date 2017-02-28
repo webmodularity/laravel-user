@@ -70,4 +70,19 @@ class LogUser extends Model
 
         return 'web';
     }
+
+    public function getActionName()
+    {
+        if ($this->user_action == LogUser::ACTION_LOGIN) {
+            return 'Login';
+        } elseif ($this->user_action == LogUser::ACTION_LOGOUT) {
+            return 'Logout';
+        } elseif ($this->user_action == LogUser::ACTION_REGISTER) {
+            return 'Register';
+        } elseif ($this->user_action == LogUser::ACTION_LINK_SOCIAL) {
+            return 'Link Social';
+        } else {
+            return 'N/A';
+        }
+    }
 }
