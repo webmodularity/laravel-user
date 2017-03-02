@@ -16,9 +16,9 @@ trait AuthenticatesUsersAndSocialUsers
 {
     use AuthenticatesUsers, RegistersSocialUsers;
 
-    public function redirectSocialUser(UserSocialProvider $socialProvider, Socialite $socialite)
+    public function redirectSocialUser(UserSocialProvider $userSocialProvider, Socialite $socialite)
     {
-        return $socialite->driver($socialProvider->slug)->redirect();
+        return $socialite->driver($userSocialProvider->slug)->redirect();
     }
 
     /**
@@ -29,7 +29,7 @@ trait AuthenticatesUsersAndSocialUsers
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function loginSocialUser(UserSocialProvider $socialProvider, Socialite $socialite, Request $request)
+    public function loginSocialUser(UserSocialProvider $userSocialProvider, Socialite $socialite, Request $request)
     {
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
@@ -40,11 +40,11 @@ trait AuthenticatesUsersAndSocialUsers
         }
 
         // Attempt to log in the user associated to this social provider
-        $socialUser = $socialite->driver($socialProvider->slug)->user();
+        $socialUser = $socialite->driver($userSocialProvider->slug)->user();
         $userSocialProfile = UserSocialProfile::where(
             [
                 ['uid', $socialUser->getId()],
-                ['social_provider_id', $socialProvider->id]
+                ['social_provider_id', $userSocialProvider->id]
             ]
         )
             ->with('user')
@@ -61,7 +61,7 @@ trait AuthenticatesUsersAndSocialUsers
         $this->incrementLoginAttempts($request);
 
         // Try and register new user before sending failed response.
-        return $this->registerSocialUser($socialUser, $socialProvider, $request)
+        return $this->registerSocialUser($socialUser, $userSocialProvider, $request)
             ?: $this->sendFailedSocialUserLoginResponse($request);
     }
 
