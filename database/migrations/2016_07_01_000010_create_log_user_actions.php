@@ -52,7 +52,7 @@ class CreateLogUserActions extends Migration
         ];
 
         foreach ($defaultUserActions as $userAction) {
-            LogUserAction::create($defaultUserActions);
+            LogUserAction::create($userAction);
         }
     }
 
