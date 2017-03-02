@@ -56,6 +56,10 @@ class UserServiceProvider extends ServiceProvider
             'WebModularity\LaravelUser\Http\Middleware\SocialUsersAllowed'
         );
 
+        // Social Routes
+        $this->app->make('router')->get('social/{userSocialProvider}', "App\Http\Controllers\Auth\LoginController@redirectSocialUser");
+        $this->app->make('router')->get('social/handle/{userSocialProvider}', "App\Http\Controllers\Auth\LoginController@loginSocialUser");
+
         // Social Logins
         if (config('wm.user.modes.social', false)) {
             $this->loadSocialLogins($events);
@@ -74,9 +78,5 @@ class UserServiceProvider extends ServiceProvider
         View::composer('auth.login', function ($view) {
             $view->with('socialProviders', UserSocialProvider::all());
         });
-
-        // Social Routes
-        //$this->app->make('router')->get('social/{userSocialProvider}', "App\Http\Controllers\Auth\LoginController@redirectSocialUser");
-        //$this->app->make('router')->get('social/handle/{userSocialProvider}', "App\Http\Controllers\Auth\LoginController@loginSocialUser");
     }
 }
