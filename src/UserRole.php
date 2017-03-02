@@ -5,13 +5,13 @@ namespace WebModularity\LaravelUser;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * WebModularity\LaravelUser\LogUserAction
+ * WebModularity\LaravelUser\UserRole
  *
  * @property int $id
  * @property string $slug
  */
 
-class LogUserAction extends Model
+class UserRole extends Model
 {
     public $timestamps = false;
 
@@ -20,5 +20,5 @@ class LogUserAction extends Model
      *
      * @var array
      */
-    protected $fillable = ['slug'];
+    protected $fillable = ['id', 'slug'];
 }

@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use WebModularity\LaravelContact\Person;
-use WebModularity\LaravelProviders\SocialProvider;
 
 /**
  * WebModularity\LaravelUser\UserInvitation
@@ -21,8 +20,8 @@ use WebModularity\LaravelProviders\SocialProvider;
  * @property string $expires_at
  * @property string $claimed_at
  * @property-read \WebModularity\LaravelContact\Person $person
- * @property-read \WebModularity\LaravelUser\Role $role
- * @property-read \WebModularity\LaravelProviders\SocialProvider $socialProvider
+ * @property-read \WebModularity\LaravelUser\UserRole $role
+ * @property-read \WebModularity\LaravelUser\UserSocialProvider $socialProvider
  * @method static Builder|UserInvitation notClaimed()
  * @method static Builder|UserInvitation notExpired()
  */
@@ -59,7 +58,7 @@ class UserInvitation extends Model
      */
     public function role()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(UserRole::class);
     }
 
     /**
@@ -67,7 +66,7 @@ class UserInvitation extends Model
      */
     public function socialProvider()
     {
-        return $this->belongsTo('WebModularity\LaravelProviders\SocialProvider');
+        return $this->belongsTo(UserSocialProvider::class);
     }
 
     public function scopeNotClaimed($query)
@@ -86,10 +85,10 @@ class UserInvitation extends Model
     /**
      * Finds all active invitations matching passed parameters.
      * @param Person|null $person
-     * @param SocialProvider|null $socialProvider
+     * @param UserSocialProvider|null $socialProvider
      * @return Collection|null
      */
-    public static function findInvitations(Person $person = null, $socialProvider = null)
+    public static function findInvitations(Person $person = null, UserSocialProvider $socialProvider = null)
     {
         $query = static::notClaimed()
             ->notExpired()

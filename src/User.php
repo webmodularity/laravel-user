@@ -6,8 +6,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use WebModularity\LaravelContact\Person;
-use WebModularity\LaravelUser\Role;
-use WebModularity\LaravelUser\UserSocialProfile;
 
 /**
  * WebModularity\LaravelUser\User
@@ -24,7 +22,7 @@ use WebModularity\LaravelUser\UserSocialProfile;
  * @property \Carbon\Carbon $updated_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read Person $person
- * @property-read Role $role
+ * @property-read UserRole $role
  * @property-read \Illuminate\Database\Eloquent\Collection|UserSocialProfile[] $userSocialProfiles
  */
 class User extends Authenticatable
@@ -71,7 +69,7 @@ class User extends Authenticatable
      */
     public function role()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(UserRole::class);
     }
 
     /**

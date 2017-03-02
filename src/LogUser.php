@@ -4,7 +4,6 @@ namespace WebModularity\LaravelUser;
 
 use Illuminate\Database\Eloquent\Model;
 use WebModularity\LaravelLog\LogRequest;
-use WebModularity\LaravelProviders\SocialProvider;
 use Carbon\Carbon;
 
 /**
@@ -19,9 +18,8 @@ use Carbon\Carbon;
  * @property-read LogUserAction $userAction
  * @property-read LogRequest $logRequest
  * @property-read User $user
- * @property-read SocialProvider $socialProvider
+ * @property-read UserSocialProvider $socialProvider
  */
-
 class LogUser extends Model
 {
     const UPDATED_AT = null;
@@ -50,13 +48,13 @@ class LogUser extends Model
 
     public function socialProvider()
     {
-        return $this->belongsTo(SocialProvider::class);
+        return $this->belongsTo(UserSocialProvider::class);
     }
 
     public function scopeLogins($query, $loginCount = 3)
     {
         return $query->whereHas('userAction', function ($query) {
-            $query->where('action', 'Login');
+            $query->where('slug', 'login');
         });
     }
 
@@ -68,7 +66,7 @@ class LogUser extends Model
     public function getVia()
     {
         if (!is_null($this->socialProvider)) {
-            return $this->socialProvider->provider->name;
+            return $this->socialProvider->slug;
         }
 
         return 'web';

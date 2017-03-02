@@ -38,7 +38,7 @@ class LogUserSocialProfileLinked
         LogUser::create([
             'log_request_id' => $logRequest->id,
             'user_id' => $userSocialProfile->user_id,
-            'user_action_id' => LogUserAction::where('action', 'Link Social')->first()->id,
+            'user_action_id' => LogUserAction::where('slug', 'link-social')->first()->id,
             'social_provider_id' => $userSocialProfile->social_provider_id
         ]);
     }

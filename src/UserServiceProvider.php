@@ -2,18 +2,9 @@
 
 namespace WebModularity\LaravelUser;
 
-use View;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
-use WebModularity\LaravelUser\Events\UserInvitationClaimed;
-use WebModularity\LaravelUser\Events\UserSocialProfileLinked;
-use WebModularity\LaravelUser\Http\Middleware\SocialProviderActive;
-use WebModularity\LaravelUser\Http\Middleware\SocialLoginOnly;
-use WebModularity\LaravelProviders\SocialProvider;
-use WebModularity\LaravelUser\Listeners\LogUserInvitationClaimed;
-use WebModularity\LaravelUser\Listeners\LogUserSocialProfileLinked;
-use WebModularity\LaravelUser\Listeners\UserAuthEventSubscriber;
+use View;
 
 class UserServiceProvider extends ServiceProvider
 {
@@ -41,10 +32,10 @@ class UserServiceProvider extends ServiceProvider
     public function boot(Dispatcher $events)
     {
         // User Auth Event Listener
-        $events->subscribe(UserAuthEventSubscriber::class);
+        $events->subscribe('WebModularity\LaravelUser\Listeners\UserAuthEventSubscriber');
         $events->listen(
-            UserInvitationClaimed::class,
-            LogUserInvitationClaimed::class
+            'WebModularity\LaravelUser\Events\UserInvitationClaimed',
+            'WebModularity\LaravelUser\Listeners\LogUserInvitationClaimed'
         );
 
         // Config
@@ -54,12 +45,12 @@ class UserServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         // UserProvider
-        $this->app->make('auth')->provider('wm-eloquent', function (Application $app, array $config) {
+        $this->app->make('auth')->provider('wm-eloquent', function ($app, array $config) {
             return new UserProvider($app->make('hash'), $config['model']);
         });
 
         // Social Logins
-        $socialProviders = config('wm.user.social.providers', []);
+        $socialProviders = UserSocialProvider::all();
         if (count($socialProviders) > 0) {
             $this->loadSocialLogins($socialProviders, $events);
         }
@@ -69,30 +60,26 @@ class UserServiceProvider extends ServiceProvider
     {
         // Events
         $events->listen(
-            UserSocialProfileLinked::class,
-            LogUserSocialProfileLinked::class
+            'WebModularity\LaravelUser\Events\UserSocialProfileLinked',
+            'WebModularity\LaravelUser\Listeners\LogUserSocialProfileLinked'
         );
 
         View::composer('auth.login', function ($view) use ($socialProviders) {
-            $view->with(
-                'socialProviders',
-                SocialProvider::whereHas(
-                    'provider',
-                    function ($query) use ($socialProviders) {
-                        $query->whereIn('slug', $socialProviders);
-                    }
-                )->get()
-            );
+            $view->with('socialProviders', $socialProviders);
         });
 
         // Social Routes
         $this->loadRoutesFrom(__DIR__ . '/../routes/social.php');
         $this->app->make('router')->bind('socialProvider', function ($value) {
-            return SocialProvider::whereHas('provider', function ($query) use ($value) {
-                $query->where('slug', $value);
-            })->first();
+            return UserSocialProvider::where('slug', $value)->first();
         });
-        $this->app->make('router')->aliasMiddleware('auth.social_provider', SocialProviderActive::class);
-        $this->app->make('router')->aliasMiddleware('auth.social_login_only', SocialLoginOnly::class);
+        $this->app->make('router')->aliasMiddleware(
+            'auth.social_provider',
+            'WebModularity\LaravelUser\Http\Middleware\SocialProviderActive'
+        );
+        $this->app->make('router')->aliasMiddleware(
+            'auth.social_login_only',
+            'WebModularity\LaravelUser\Http\Middleware\SocialLoginOnly'
+        );
     }
 }

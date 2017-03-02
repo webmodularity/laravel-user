@@ -34,7 +34,7 @@ class UserAuthEventSubscriber
         LogUser::create([
             'log_request_id' => LogRequest::createFromRequest($this->request)->id,
             'user_id' => $event->user->id,
-            'user_action_id' => LogUserAction::where('action', 'Login')->first()->id,
+            'user_action_id' => LogUserAction::where('slug', 'login')->first()->id,
             'social_provider_id' => $this->getSocialProviderId()
         ]);
     }
@@ -49,7 +49,7 @@ class UserAuthEventSubscriber
         LogUser::create([
             'log_request_id' => LogRequest::createFromRequest($this->request)->id,
             'user_id' => $event->user->id,
-            'user_action_id' => LogUserAction::where('action', 'Logout')->first()->id,
+            'user_action_id' => LogUserAction::where('slug', 'logout')->first()->id,
         ]);
     }
 
@@ -63,7 +63,7 @@ class UserAuthEventSubscriber
         LogUser::create([
             'log_request_id' => LogRequest::createFromRequest($this->request)->id,
             'user_id' => $event->user->id,
-            'user_action_id' => LogUserAction::where('action', 'Register')->first()->id,
+            'user_action_id' => LogUserAction::where('slug', 'register')->first()->id,
             'social_provider_id' => $this->getSocialProviderId()
         ]);
     }

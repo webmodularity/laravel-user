@@ -3,7 +3,6 @@
 namespace WebModularity\LaravelUser;
 
 use Illuminate\Database\Eloquent\Model;
-use WebModularity\LaravelProviders\SocialProvider;
 
 /**
  * WebModularity\LaravelUser\UserSocialProfile
@@ -14,7 +13,7 @@ use WebModularity\LaravelProviders\SocialProvider;
  * @property string $uid
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property-read SocialProvider $socialProvider
+ * @property-read UserSocialProvider $socialProvider
  * @property-read User $user
  */
 
@@ -42,6 +41,6 @@ class UserSocialProfile extends Model
      */
     public function socialProvider()
     {
-        return $this->belongsTo(SocialProvider::class);
+        return $this->belongsTo(UserSocialProvider::class);
     }
 }
