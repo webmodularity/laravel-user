@@ -20,37 +20,35 @@ class CreateLogUserActions extends Migration
 
         $defaultUserActions = [
             [
-                [
-                    'slug' => 'login'
-                ],
-                [
-                    'slug' => 'login-failed'
-                ],
-                [
-                    'slug' => 'logout'
-                ],
-                [
-                    'slug' => 'register'
-                ],
-                [
-                    'slug' => 'link-social'
-                ],
-                [
-                    'slug' => 'unlink-social'
-                ],
-                [
-                    'slug' => 'change-password-request'
-                ],
-                [
-                    'slug' => 'change-password-success'
-                ],
-                [
-                    'slug' => 'delete'
-                ],
-                [
-                    'slug' => 'lockout'
-                ],
-            ]
+                'slug' => 'login'
+            ],
+            [
+                'slug' => 'login-failed'
+            ],
+            [
+                'slug' => 'logout'
+            ],
+            [
+                'slug' => 'register'
+            ],
+            [
+                'slug' => 'link-social'
+            ],
+            [
+                'slug' => 'unlink-social'
+            ],
+            [
+                'slug' => 'change-password-request'
+            ],
+            [
+                'slug' => 'change-password-success'
+            ],
+            [
+                'slug' => 'delete'
+            ],
+            [
+                'slug' => 'lockout'
+            ],
         ];
 
         foreach ($defaultUserActions as $userAction) {
