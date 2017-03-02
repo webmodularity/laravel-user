@@ -15,15 +15,15 @@ class CreateUsers extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('person_id')->unique();
-            $table->unsignedTinyInteger('user_role_id')->default(0);
+            $table->unsignedTinyInteger('role_id')->default(0);
             $table->string('avatar_url')->nullable();
             $table->string('username', 50)->nullable()->unique();
             $table->string('password')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->rememberToken();
             $table->timestamps();
-            $table->foreign('person_id')->references('id')->on('people')->onUpdate('cascade')->onDelete('no action');
-            $table->foreign('user_role_id')->references('id')->on('user_roles')->onUpdate('cascade')->onDelete('no action');
+            $table->foreign('person_id')->references('id')->on('people')->onUpdate('cascade');
+            $table->foreign('role_id')->references('id')->on('user_roles')->onUpdate('cascade');
         });
     }
 
