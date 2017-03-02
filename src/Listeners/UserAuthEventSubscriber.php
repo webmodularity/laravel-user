@@ -93,8 +93,8 @@ class UserAuthEventSubscriber
 
     protected function getSocialProviderId()
     {
-        return isset($this->request->socialProvider) && !empty($this->request->socialProvider)
-            ? $this->request->socialProvider->id
+        return isset($this->request->userSocialProvider) && !empty($this->request->userSocialProvider)
+            ? $this->request->userSocialProvider->id
             : null;
     }
 }
