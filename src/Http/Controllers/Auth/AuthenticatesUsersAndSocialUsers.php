@@ -18,6 +18,7 @@ trait AuthenticatesUsersAndSocialUsers
 
     public function redirectSocialUser(UserSocialProvider $socialProvider, Socialite $socialite)
     {
+        dd($socialProvider, $socialite);
         return $socialite->driver($socialProvider->slug)->redirect();
     }
 
