@@ -16,9 +16,6 @@ class UserServiceProvider extends ServiceProvider
         // Register LaravelContact Service Provider
         $this->app->register('WebModularity\LaravelContact\ContactServiceProvider');
 
-        // Register LaravelProviders Service Provider
-        $this->app->register('WebModularity\LaravelProviders\ProvidersServiceProvider');
-
         // Register LaravelLog Service Provider
         $this->app->register('WebModularity\LaravelLog\LogServiceProvider');
 
