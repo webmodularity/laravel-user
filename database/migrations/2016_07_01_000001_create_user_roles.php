@@ -40,7 +40,7 @@ class CreateUserRoles extends Migration
         ];
 
         foreach ($defaultRoles as $role) {
-            LogUserAction::create($role);
+            LogUserRole::create($role);
         }
     }
 
