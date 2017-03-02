@@ -7,8 +7,8 @@ Publish the configuration file with:
 php artisan vendor:publish --provider="WebModularity\LaravelUser\UserServiceProvider" --tag=config
 ```
 
-If you are starting from a default Laravel app you will need to change the `config/auth.php` from:
-
+Modify the providers array in the `config/auth.php` file:
+Change
 ```php
     'providers' => [
         'users' => [
@@ -26,7 +26,13 @@ to this:
 ```
 
 ### Social Logins
-In the `config/services.php` add the services you intend to use for Social Logins *(If they don't already exist)*
+Add routes to `routes/web.php`
+```php
+Route::get('social/{userSocialProvider}', "Auth\LoginController@redirectSocialUser");
+Route::get('social/handle/{userSocialProvider}', "Auth\LoginController@loginSocialUser");
+```
+
+In the `config/services.php` add the services you intend to use for Social Logins
 
 ```php
     'google' => [
