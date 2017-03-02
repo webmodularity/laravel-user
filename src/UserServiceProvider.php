@@ -81,7 +81,7 @@ class UserServiceProvider extends ServiceProvider
         $router->bind('socialProvider', function ($value) {
             return UserSocialProvider::where('slug', $value)->first();
         });
-        $router->get('social/{socialProvider}', "Auth\LoginController@redirectSocialUser");
-        $router->get('social/handle/{socialProvider}', "Auth\LoginController@loginSocialUser");
+        $router->get('social/{socialProvider}', "App\Http\Controllers\Auth\LoginController@redirectSocialUser");
+        $router->get('social/handle/{socialProvider}', "App\Http\Controllers\Auth\LoginController@loginSocialUser");
     }
 }
