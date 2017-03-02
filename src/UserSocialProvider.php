@@ -23,10 +23,10 @@ class UserSocialProvider extends Model
      */
     protected $fillable = ['slug'];
 
-    public function getUrlAttribute($value)
-    {
-        return Provider::urlReplace($this->provider->name, $value);
-    }
+    //public function getUrlAttribute($value)
+    //{
+    //    return Provider::urlReplace($this->provider->name, $value);
+    //}
 
     /**
      * Get a more accurate first and last name from some social providers.

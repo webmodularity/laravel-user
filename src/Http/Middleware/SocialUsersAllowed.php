@@ -4,7 +4,7 @@ namespace WebModularity\LaravelUser\Http\Middleware;
 
 use Closure;
 
-class SocialLoginOnly
+class SocialUsersAllowed
 {
     /**
      * Handle an incoming request.
@@ -15,7 +15,7 @@ class SocialLoginOnly
      */
     public function handle($request, Closure $next)
     {
-        if (config('wm.user.social.social_login_only', false)) {
+        if (!config('wm.user.modes.social', false)) {
             abort(404);
         }
 

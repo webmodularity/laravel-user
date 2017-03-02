@@ -6,7 +6,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use WebModularity\LaravelUser\UserSocialProfile;
-use WebModularity\LaravelProviders\SocialProvider;
+use WebModularity\LaravelUser\UserSocialProvider;
 
 /**
  * Class AuthenticatesUsersAndSocialUsers
@@ -16,15 +16,20 @@ trait AuthenticatesUsersAndSocialUsers
 {
     use AuthenticatesUsers, RegistersSocialUsers;
 
+    public function redirectSocialUser(UserSocialProvider $socialProvider, Socialite $socialite)
+    {
+        return $socialite->driver($socialProvider->slug)->redirect();
+    }
+
     /**
      * Obtain the user information from specified SocialProvider.
      *
-     * @param SocialProvider $socialProvider SocialProvider Model filled from route
+     * @param UserSocialProvider $socialProvider SocialProvider Model filled from route
      * @param Socialite $socialite injected from ioc
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function loginSocialUser(SocialProvider $socialProvider, Socialite $socialite, Request $request)
+    public function loginSocialUser(UserSocialProvider $socialProvider, Socialite $socialite, Request $request)
     {
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
@@ -35,7 +40,7 @@ trait AuthenticatesUsersAndSocialUsers
         }
 
         // Attempt to log in the user associated to this social provider
-        $socialUser = $socialite->driver($socialProvider->getSlug())->user();
+        $socialUser = $socialite->driver($socialProvider->slug)->user();
         $userSocialProfile = UserSocialProfile::where(
             [
                 ['uid', $socialUser->getId()],

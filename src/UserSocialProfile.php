@@ -24,9 +24,7 @@ class UserSocialProfile extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'user_id', 'social_provider_id', 'uid'
-    ];
+    protected $fillable = ['user_id', 'social_provider_id', 'uid'];
 
     /**
      * Get the user that owns this UserSocialProfile.

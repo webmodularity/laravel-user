@@ -1,16 +1,15 @@
 <?php
 
 return [
-    'social' =>
-        [
-            'providers' => [
-                //'google',
-                //'github',
-                //'facebook',
-                //'twitter',
-                //'linkedin',
-                //'bitbucket'
-            ],
-            'social_login_only' => false
-        ]
+    'modes' =>
+    [
+        /**
+         * Enable user login, register, etc. via username/password combo stored locally
+         */
+        'local' => true,
+        /**
+         * Enable user login, register, etc. via social provider
+         */
+        'social' => false
+    ]
 ];

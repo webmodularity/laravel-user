@@ -49,14 +49,23 @@ class UserServiceProvider extends ServiceProvider
             return new UserProvider($app->make('hash'), $config['model']);
         });
 
+        // Middleware
+        $this->app->make('router')->aliasMiddleware(
+            'auth.local_users_allowed',
+            'WebModularity\LaravelUser\Http\Middleware\LocalUsersAllowed'
+        );
+        $this->app->make('router')->aliasMiddleware(
+            'auth.social_users_allowed',
+            'WebModularity\LaravelUser\Http\Middleware\SocialUsersAllowed'
+        );
+
         // Social Logins
-        $socialProviders = UserSocialProvider::all();
-        if (count($socialProviders) > 0) {
-            $this->loadSocialLogins($socialProviders, $events);
+        if (config('wm.user.modes.social', false)) {
+            $this->loadSocialLogins($events);
         }
     }
 
-    protected function loadSocialLogins($socialProviders, Dispatcher $events)
+    protected function loadSocialLogins(Dispatcher $events)
     {
         // Events
         $events->listen(
@@ -64,22 +73,18 @@ class UserServiceProvider extends ServiceProvider
             'WebModularity\LaravelUser\Listeners\LogUserSocialProfileLinked'
         );
 
-        View::composer('auth.login', function ($view) use ($socialProviders) {
+        // View Composers
+        View::composer('auth.login', function ($view) {
+            $socialProviders = UserSocialProvider::all();
             $view->with('socialProviders', $socialProviders);
         });
 
         // Social Routes
-        $this->loadRoutesFrom(__DIR__ . '/../routes/social.php');
-        $this->app->make('router')->bind('socialProvider', function ($value) {
+        $router = $this->app->make('router');
+        $router->bind('socialProvider', function ($value) {
             return UserSocialProvider::where('slug', $value)->first();
         });
-        $this->app->make('router')->aliasMiddleware(
-            'auth.social_provider',
-            'WebModularity\LaravelUser\Http\Middleware\SocialProviderActive'
-        );
-        $this->app->make('router')->aliasMiddleware(
-            'auth.social_login_only',
-            'WebModularity\LaravelUser\Http\Middleware\SocialLoginOnly'
-        );
+        $router->get('social/{socialProvider}', "Auth\LoginController@redirectSocialUser");
+        $router->get('social/handle/{socialProvider}', "Auth\LoginController@loginSocialUser");
     }
 }

@@ -4,7 +4,7 @@ namespace WebModularity\LaravelUser\Http\Middleware;
 
 use Closure;
 
-class SocialProviderActive
+class LocalUsersAllowed
 {
     /**
      * Handle an incoming request.
@@ -15,10 +15,8 @@ class SocialProviderActive
      */
     public function handle($request, Closure $next)
     {
-        $socialProvider = $request->route('socialProvider');
-
-        if (empty($socialProvider) || !$socialProvider->authIsActive()) {
-            abort(404, 'Social Provider Not Found.');
+        if (!config('wm.user.modes.local', false)) {
+            abort(404);
         }
 
         return $next($request);
