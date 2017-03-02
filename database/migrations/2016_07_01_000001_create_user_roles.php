@@ -3,6 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use WebModularity\LaravelUser\LogUserAction;
+use WebModularity\LaravelUser\UserRole;
 
 class CreateUserRoles extends Migration
 {
@@ -40,7 +41,7 @@ class CreateUserRoles extends Migration
         ];
 
         foreach ($defaultRoles as $role) {
-            LogUserRole::create($role);
+            UserRole::create($role);
         }
     }
 
