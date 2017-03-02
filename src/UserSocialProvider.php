@@ -23,10 +23,15 @@ class UserSocialProvider extends Model
      */
     protected $fillable = ['slug'];
 
-    //public function getUrlAttribute($value)
-    //{
-    //    return Provider::urlReplace($this->provider->name, $value);
-    //}
+    /**
+     * Get the route key for the model.
+     *
+     * @return string
+     */
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 
     /**
      * Get a more accurate first and last name from some social providers.
