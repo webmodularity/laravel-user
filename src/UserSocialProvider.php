@@ -33,6 +33,15 @@ class UserSocialProvider extends Model
         return 'slug';
     }
 
+    public function getName()
+    {
+        if ($this->slug == 'github') {
+            return 'GitHub';
+        }
+
+        return ucfirst($this->slug);
+    }
+
     /**
      * Get a more accurate first and last name from some social providers.
      * @param $socialUser
