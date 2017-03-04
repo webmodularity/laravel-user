@@ -12,7 +12,7 @@ use WebModularity\LaravelUser\Events\UserSocialProfileLinked;
 use WebModularity\LaravelUser\User;
 use WebModularity\LaravelUser\UserInvitation;
 use WebModularity\LaravelUser\UserSocialProfile;
-use WebModularity\LaravelUser\UserSocialProvider;
+use WebModularity\LaravelUser\UserSocialProvider as SocialProvider;
 
 /**
  * Class RegistersSocialUsers
@@ -23,11 +23,11 @@ trait RegistersSocialUsers
     /**
      * Method called from (failed) social user login attempt
      * @param SocialUser $socialUser
-     * @param UserSocialProvider $socialProvider
+     * @param SocialProvider $socialProvider
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|null
      */
-    protected function registerSocialUser(SocialUser $socialUser, UserSocialProvider $socialProvider, Request $request)
+    protected function registerSocialUser(SocialUser $socialUser, SocialProvider $socialProvider, Request $request)
     {
         if (is_null($socialUser) || is_null($socialProvider)) {
             return null;
@@ -57,10 +57,10 @@ trait RegistersSocialUsers
 
     /**
      * @param SocialUser $socialUser
-     * @param UserSocialProvider $socialProvider
+     * @param SocialProvider $socialProvider
      * @return null
      */
-    protected function getUserInvitationFromSocialUser(SocialUser $socialUser, UserSocialProvider $socialProvider)
+    protected function getUserInvitationFromSocialUser(SocialUser $socialUser, SocialProvider $socialProvider)
     {
         $person = Person::where('email', $socialUser->getEmail())->first();
         $invitations = UserInvitation::findInvitations($person, $socialProvider);
@@ -79,13 +79,13 @@ trait RegistersSocialUsers
 
     /**
      * @param SocialUser $socialUser
-     * @param UserSocialProvider $socialProvider
+     * @param SocialProvider $socialProvider
      * @param UserInvitation $invitation
      * @return mixed
      */
     protected function getUserFromInvitation(
         SocialUser $socialUser,
-        UserSocialProvider $socialProvider,
+        SocialProvider $socialProvider,
         UserInvitation $invitation
     ) {
         // Person
@@ -108,10 +108,10 @@ trait RegistersSocialUsers
 
     /**
      * @param SocialUser $socialUser
-     * @param UserSocialProvider $socialProvider
+     * @param SocialProvider $socialProvider
      * @return mixed
      */
-    protected function getPersonFromSocialUser(SocialUser $socialUser, UserSocialProvider $socialProvider)
+    protected function getPersonFromSocialUser(SocialUser $socialUser, SocialProvider $socialProvider)
     {
         $person = Person::where('email', $socialUser->getEmail())->first();
 

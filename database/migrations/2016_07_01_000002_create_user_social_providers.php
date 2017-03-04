@@ -15,6 +15,7 @@ class CreateUserSocialProviders extends Migration
         Schema::create('user_social_providers', function (Blueprint $table) {
             $table->smallIncrements('id');
             $table->string('slug', 255)->unique();
+            $table->boolean('status')->default(0);
         });
     }
 

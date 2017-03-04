@@ -74,5 +74,14 @@ class UserServiceProvider extends ServiceProvider
         View::composer('auth.login', function ($view) {
             $view->with('socialProviders', UserSocialProvider::all());
         });
+
+        Route::bind('socialProvider', function ($value) {
+            return UserSocialProvider::where(
+                [
+                    ['slug' => $value],
+                    ['status' => true]
+                ]
+            )->first();
+        });
     }
 }

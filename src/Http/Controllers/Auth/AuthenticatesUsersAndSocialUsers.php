@@ -6,7 +6,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use WebModularity\LaravelUser\UserSocialProfile;
-use WebModularity\LaravelUser\UserSocialProvider;
+use WebModularity\LaravelUser\UserSocialProvider as SocialProvider;
 
 /**
  * Class AuthenticatesUsersAndSocialUsers
@@ -16,20 +16,20 @@ trait AuthenticatesUsersAndSocialUsers
 {
     use AuthenticatesUsers, RegistersSocialUsers;
 
-    public function redirectSocialUser(UserSocialProvider $userSocialProvider, Socialite $socialite)
+    public function redirectSocialUser(SocialProvider $socialProvider, Socialite $socialite)
     {
-        return $socialite->driver($userSocialProvider->slug)->redirect();
+        return $socialite->driver($socialProvider->slug)->redirect();
     }
 
     /**
      * Obtain the user information from specified SocialProvider.
      *
-     * @param UserSocialProvider $socialProvider SocialProvider Model filled from route
+     * @param SocialProvider $socialProvider SocialProvider Model filled from route
      * @param Socialite $socialite injected from ioc
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function loginSocialUser(UserSocialProvider $userSocialProvider, Socialite $socialite, Request $request)
+    public function loginSocialUser(SocialProvider $socialProvider, Socialite $socialite, Request $request)
     {
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
@@ -40,11 +40,11 @@ trait AuthenticatesUsersAndSocialUsers
         }
 
         // Attempt to log in the user associated to this social provider
-        $socialUser = $socialite->driver($userSocialProvider->slug)->user();
+        $socialUser = $socialite->driver($socialProvider->slug)->user();
         $userSocialProfile = UserSocialProfile::where(
             [
                 ['uid', $socialUser->getId()],
-                ['social_provider_id', $userSocialProvider->id]
+                ['social_provider_id', $socialProvider->id]
             ]
         )
             ->with('user')
@@ -61,7 +61,7 @@ trait AuthenticatesUsersAndSocialUsers
         $this->incrementLoginAttempts($request);
 
         // Try and register new user before sending failed response.
-        return $this->registerSocialUser($socialUser, $userSocialProvider, $request)
+        return $this->registerSocialUser($socialUser, $socialProvider, $request)
             ?: $this->sendFailedSocialUserLoginResponse($request);
     }
 
