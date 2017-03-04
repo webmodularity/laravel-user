@@ -5,6 +5,7 @@ namespace WebModularity\LaravelUser;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\ServiceProvider;
 use View;
+use Route;
 
 class UserServiceProvider extends ServiceProvider
 {
