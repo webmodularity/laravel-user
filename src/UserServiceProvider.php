@@ -79,8 +79,8 @@ class UserServiceProvider extends ServiceProvider
         Route::bind('socialProvider', function ($value) {
             return UserSocialProvider::where(
                 [
-                    ['slug' => $value],
-                    ['status' => true]
+                    ['slug', $value],
+                    ['status', true]
                 ]
             )->first();
         });
