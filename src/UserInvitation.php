@@ -15,7 +15,6 @@ use WebModularity\LaravelContact\Person;
  * @property int $social_provider_id
  * @property int $person_id
  * @property bool $role_id
- * @property bool $status
  * @property string $invite_key
  * @property string $expires_at
  * @property string $claimed_at
@@ -39,7 +38,6 @@ class UserInvitation extends Model
         'social_provider_id',
         'person_id',
         'role_id',
-        'status',
         'invite_key',
         'expires_at',
         'claimed_at'
