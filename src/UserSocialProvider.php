@@ -10,6 +10,7 @@ use Laravel\Socialite\Contracts\User as SocialUser;
  *
  * @property int $id
  * @property string $slug
+ * @property bool $status
  */
 
 class UserSocialProvider extends Model
@@ -21,17 +22,9 @@ class UserSocialProvider extends Model
      *
      * @var array
      */
-    protected $fillable = ['slug'];
+    protected $fillable = ['slug', 'status'];
 
-    /**
-     * Get the route key for the model.
-     *
-     * @return string
-     */
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
+    protected $casts = ['status' => 'boolean'];
 
     public function getName()
     {

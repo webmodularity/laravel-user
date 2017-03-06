@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use WebModularity\LaravelUser\UserSocialProvider;
 
 class CreateUserSocialProviders extends Migration
 {
@@ -17,6 +18,38 @@ class CreateUserSocialProviders extends Migration
             $table->string('slug', 255)->unique();
             $table->boolean('status')->default(0);
         });
+
+
+        $defaultSocialProviders = [
+            [
+                'slug' => 'facebook',
+                'status' => false
+            ],
+            [
+                'slug' => 'twitter',
+                'status' => false
+            ],
+            [
+                'slug' => 'linkedin',
+                'status' => false
+            ],
+            [
+                'slug' => 'google',
+                'status' => false
+            ],
+            [
+                'slug' => 'github',
+                'status' => false
+            ],
+            [
+                'slug' => 'bitbucket',
+                'status' => false
+            ],
+        ];
+
+        foreach ($defaultSocialProviders as $socialProvider) {
+            UserSocialProvider::create($socialProvider);
+        }
     }
 
     /**
