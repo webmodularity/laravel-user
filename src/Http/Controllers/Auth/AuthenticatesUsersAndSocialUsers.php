@@ -50,9 +50,9 @@ trait AuthenticatesUsersAndSocialUsers
             ->with('user')
             ->first();
 
-        dd($userSocialProfile);
         if (!is_null($userSocialProfile)) {
             $this->guard()->login($userSocialProfile->user, false);
+            dd(\Auth::user());
             $this->sendLoginResponse($request);
         }
 
