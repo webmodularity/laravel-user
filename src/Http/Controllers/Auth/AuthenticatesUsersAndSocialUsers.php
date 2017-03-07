@@ -16,8 +16,6 @@ trait AuthenticatesUsersAndSocialUsers
 {
     use AuthenticatesUsers, RegistersSocialUsers;
 
-    protected $redirectTo = '/';
-
     public function redirectSocialUser(SocialProvider $socialProvider, Socialite $socialite)
     {
         return $socialite->driver($socialProvider->slug)->redirect();
