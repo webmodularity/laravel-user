@@ -26,6 +26,11 @@ class UserSocialProvider extends Model
 
     protected $casts = ['status' => 'boolean'];
 
+    public function scopeIsActive($query)
+    {
+        return $query->where('status', true);
+    }
+
     public function getName()
     {
         if ($this->slug == 'github') {

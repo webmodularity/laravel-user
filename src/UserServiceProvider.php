@@ -73,7 +73,7 @@ class UserServiceProvider extends ServiceProvider
 
         // View Composers
         View::composer('auth.login', function ($view) {
-            $view->with('socialProviders', UserSocialProvider::all());
+            $view->with('socialProviders', UserSocialProvider::isActive()->get());
         });
 
         Route::bind('socialProvider', function ($value) {
