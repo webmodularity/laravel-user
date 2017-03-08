@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property string $slug
  */
-
 class UserRole extends Model
 {
     public $timestamps = false;
