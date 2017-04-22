@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use WebModularity\LaravelContact\Person;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * WebModularity\LaravelUser\User
@@ -16,8 +17,8 @@ use WebModularity\LaravelContact\Person;
  * @property string $avatar_url
  * @property string $username
  * @property string $password
- * @property bool $status
  * @property string $remember_token
+ * @property \Carbon\Carbon $deleted_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
@@ -27,16 +28,9 @@ use WebModularity\LaravelContact\Person;
  */
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, SoftDeletes;
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::addGlobalScope('withPerson', function (Builder $builder) {
-            $builder->with(['person']);
-        });
-    }
+    protected $dates = ['deleted_at'];
 
     /**
      * The attributes that are mass assignable.
@@ -55,6 +49,15 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope('withPerson', function (Builder $builder) {
+            $builder->with(['person']);
+        });
+    }
 
     /**
      * Get the person that owns the user.
