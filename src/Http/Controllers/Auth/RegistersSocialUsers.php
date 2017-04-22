@@ -97,8 +97,7 @@ trait RegistersSocialUsers
                 [
                     'person_id' => $person->id,
                     'role_id' => $invitation->role_id,
-                    'avatar_url' => $socialProvider->getAvatarFromSocial($socialUser),
-                    'status' => $invitation->status
+                    'avatar_url' => $socialProvider->getAvatarFromSocial($socialUser)
                 ]
             );
             event(new Registered($user));

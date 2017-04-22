@@ -17,7 +17,6 @@ class CreateUserInvitations extends Migration
             $table->unsignedSmallInteger('social_provider_id')->nullable();
             $table->unsignedInteger('person_id')->nullable();
             $table->unsignedTinyInteger('role_id')->default(0);
-            $table->tinyInteger('status')->default(0);
             $table->string('invite_key')->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->timestamp('claimed_at')->nullable();
