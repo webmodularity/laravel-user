@@ -82,4 +82,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserSocialProfile::class);
     }
+
+    public function scopeVisibleByRole($query, $roleId = 0)
+    {
+        return $query->where('role_id', '<=', $roleId);
+    }
 }
