@@ -64,7 +64,7 @@ class UserServiceProvider extends ServiceProvider
         // Validators
         // Login Method
         Validator::extend(
-            'login-method',
+            'loginMethod',
             '\WebModularity\LaravelUser\Validators\LoginMethodValidator@validate',
             $this->app->translator->trans('user-trans::validation.login-method')
         );
