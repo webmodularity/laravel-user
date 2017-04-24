@@ -14,6 +14,6 @@ class LoginMethodValidator
             return true;
         }
 
-        return UserSocialProvider::where('status', true)->andWhere('id', $value)->count() > 0;
+        return UserSocialProvider::where('status', true)->where('id', $value)->count() > 0;
     }
 }
