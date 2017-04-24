@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'modes' =>
+    'methods' =>
     [
         /**
          * Enable user login, register, etc. via username/password combo stored locally

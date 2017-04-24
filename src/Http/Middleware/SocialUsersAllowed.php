@@ -15,7 +15,7 @@ class SocialUsersAllowed
      */
     public function handle($request, Closure $next)
     {
-        if (!config('wm.user.modes.social', false)) {
+        if (!config('wm.user.methods.social', false)) {
             abort(404);
         }
 

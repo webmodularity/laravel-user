@@ -15,7 +15,7 @@ class LocalUsersAllowed
      */
     public function handle($request, Closure $next)
     {
-        if (!config('wm.user.modes.local', false)) {
+        if (!config('wm.user.methods.local', false)) {
             abort(404);
         }
 
