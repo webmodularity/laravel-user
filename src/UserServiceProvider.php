@@ -6,6 +6,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\ServiceProvider;
 use View;
 use Route;
+use Validator;
 
 class UserServiceProvider extends ServiceProvider
 {
@@ -29,6 +30,9 @@ class UserServiceProvider extends ServiceProvider
 
     public function boot(Dispatcher $events)
     {
+        // Translations
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'user-trans');
+
         // User Auth Event Listener
         $events->subscribe('WebModularity\LaravelUser\Listeners\UserAuthEventSubscriber');
         $events->listen(
@@ -55,6 +59,14 @@ class UserServiceProvider extends ServiceProvider
         $this->app->make('router')->aliasMiddleware(
             'auth.social_users_allowed',
             'WebModularity\LaravelUser\Http\Middleware\SocialUsersAllowed'
+        );
+
+        // Validators
+        // Login Method
+        Validator::extend(
+            'login-method',
+            '\WebModularity\LaravelUser\Validators\LoginMethodValidator@validate',
+            $this->app->translator->trans('user-trans::validation.login-method')
         );
 
         // Social Logins
