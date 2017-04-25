@@ -62,6 +62,12 @@ class UserServiceProvider extends ServiceProvider
         );
 
         // Validators
+        // UserPersonUnique
+        Validator::extend(
+            'userPersonUnique',
+            '\WebModularity\LaravelUser\Validators\UserPersonUniqueValidator@validate',
+            $this->app->translator->trans('user-trans::validation.user-person-unique')
+        );
         // Login Method
         Validator::extend(
             'loginMethod',
