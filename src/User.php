@@ -2,11 +2,16 @@
 
 namespace WebModularity\LaravelUser;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Database\Eloquent\Builder;
 use WebModularity\LaravelContact\Person;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
 /**
  * WebModularity\LaravelUser\User
@@ -26,9 +31,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read UserRole $role
  * @property-read \Illuminate\Database\Eloquent\Collection|UserSocialProfile[] $userSocialProfiles
  */
-class User extends Authenticatable
+
+class User extends Model implements
+    AuthenticatableContract,
+    AuthorizableContract,
+    CanResetPasswordContract
 {
-    use Notifiable, SoftDeletes;
+    use Authenticatable, Authorizable, CanResetPassword, SoftDeletes;
 
     protected $dates = ['deleted_at'];
 
