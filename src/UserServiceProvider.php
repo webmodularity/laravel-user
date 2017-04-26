@@ -72,7 +72,7 @@ class UserServiceProvider extends ServiceProvider
         );
 
         // Social Logins
-        if (config('wm.user.methods.social', false)) {
+        if (config('wm.user.social', false)) {
             $this->loadSocialLogins($events);
         }
     }
