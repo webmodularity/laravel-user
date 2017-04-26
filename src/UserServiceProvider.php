@@ -56,6 +56,10 @@ class UserServiceProvider extends ServiceProvider
             'auth.social_users_allowed',
             'WebModularity\LaravelUser\Http\Middleware\SocialUsersAllowed'
         );
+        $this->app->make('router')->aliasMiddleware(
+            'auth.register_users_allowed',
+            'WebModularity\LaravelUser\Http\Middleware\RegisterUsersAllowed'
+        );
 
         // Validators
         // UserPersonUnique
