@@ -53,10 +53,6 @@ class UserServiceProvider extends ServiceProvider
 
         // Middleware
         $this->app->make('router')->aliasMiddleware(
-            'auth.local_users_allowed',
-            'WebModularity\LaravelUser\Http\Middleware\LocalUsersAllowed'
-        );
-        $this->app->make('router')->aliasMiddleware(
             'auth.social_users_allowed',
             'WebModularity\LaravelUser\Http\Middleware\SocialUsersAllowed'
         );

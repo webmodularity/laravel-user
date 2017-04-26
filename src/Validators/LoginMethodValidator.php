@@ -9,8 +9,8 @@ class LoginMethodValidator
 
     public function validate($attribute, $value, $parameters, $validator)
     {
-        if (config('wm.user.methods.local', false) && $value == 0) {
-            // Local
+        if ($value == 0) {
+            // Local Login
             return true;
         }
 
