@@ -109,6 +109,11 @@ class User extends Model implements
         return $this->person->email;
     }
 
+    public function routeNotificationForMail()
+    {
+        return $this->person->email;
+    }
+
     /**
      * Send the password reset notification.
      *
