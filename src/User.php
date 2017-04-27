@@ -107,4 +107,16 @@ class User extends Model implements
     {
         return $this->person->email;
     }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        \Log::critical($token);
+        $this->notify(new ResetPasswordNotification($token));
+    }
 }
