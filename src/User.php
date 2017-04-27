@@ -118,6 +118,6 @@ class User extends Model implements
     public function sendPasswordResetNotification($token)
     {
         \Log::critical($token);
-        $this->notify(new ResetPasswordNotification($token));
+        $this->notify(new \App\Mail\MailTest());
     }
 }
