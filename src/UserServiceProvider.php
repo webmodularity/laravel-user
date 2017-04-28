@@ -35,10 +35,6 @@ class UserServiceProvider extends ServiceProvider
 
         // User Auth Event Listener
         $events->subscribe('WebModularity\LaravelUser\Listeners\UserAuthEventSubscriber');
-        $events->listen(
-            'WebModularity\LaravelUser\Events\UserInvitationClaimed',
-            'WebModularity\LaravelUser\Listeners\LogUserInvitationClaimed'
-        );
 
         // Config
         $this->publishes([__DIR__ . '/../config/user.php' => config_path('wm/user.php')], 'config');

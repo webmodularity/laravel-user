@@ -7,10 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 use Laravel\Socialite\Contracts\User as SocialUser;
 use WebModularity\LaravelContact\Person;
-use WebModularity\LaravelUser\Events\UserInvitationClaimed;
 use WebModularity\LaravelUser\Events\UserSocialProfileLinked;
 use WebModularity\LaravelUser\User;
-use WebModularity\LaravelUser\UserInvitation;
 use WebModularity\LaravelUser\UserSocialProfile;
 use WebModularity\LaravelUser\UserSocialProvider as SocialProvider;
 
