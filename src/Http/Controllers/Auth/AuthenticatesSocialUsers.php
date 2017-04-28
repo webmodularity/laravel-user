@@ -2,7 +2,6 @@
 
 namespace WebModularity\LaravelUser\Http\Controllers\Auth;
 
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use WebModularity\LaravelUser\UserSocialProfile;
@@ -12,9 +11,9 @@ use WebModularity\LaravelUser\UserSocialProvider as SocialProvider;
  * Class AuthenticatesUsersAndSocialUsers
  * @package WebModularity\LaravelUser\Http\Controllers\Auth
  */
-trait AuthenticatesUsersAndSocialUsers
+trait AuthenticatesSocialUsers
 {
-    use AuthenticatesUsers, RegistersSocialUsers;
+    use RegistersSocialUsers;
 
     public function redirectSocialUser(SocialProvider $socialProvider, Socialite $socialite)
     {
@@ -41,14 +40,7 @@ trait AuthenticatesUsersAndSocialUsers
 
         // Attempt to log in the user associated to this social provider
         $socialUser = $socialite->driver($socialProvider->slug)->user();
-        $userSocialProfile = UserSocialProfile::where(
-            [
-                ['uid', $socialUser->getId()],
-                ['social_provider_id', $socialProvider->id]
-            ]
-        )
-            ->with('user')
-            ->first();
+        $userSocialProfile = UserSocialProfile::findFromSocialUser($socialUser->getId(), $socialProvider->id);
 
         if (!is_null($userSocialProfile)) {
             $this->guard()->login($userSocialProfile->user, false);

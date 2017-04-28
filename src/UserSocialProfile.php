@@ -3,6 +3,7 @@
 namespace WebModularity\LaravelUser;
 
 use Illuminate\Database\Eloquent\Model;
+use WebModularity\LaravelUser\Events\UserSocialProfileLinked;
 
 /**
  * WebModularity\LaravelUser\UserSocialProfile
@@ -40,5 +41,37 @@ class UserSocialProfile extends Model
     public function socialProvider()
     {
         return $this->belongsTo(UserSocialProvider::class);
+    }
+
+    public static function findFromSocialUser($socialUserId, $socialProviderId)
+    {
+        $userSocialProfile = UserSocialProfile::where(
+            [
+                ['uid', $socialUserId],
+                ['social_provider_id', $socialProviderId]
+            ]
+        )
+            ->with('user')
+            ->first();
+
+        if (!is_null($userSocialProfile)) {
+            return $userSocialProfile;
+        }
+
+        // Search for user with matching email address
+        $user = User::where('people.email', $socialUser->getEmail())->first();
+        if (!is_null($user)) {
+            // Link social profile
+            $userSocialProfile = UserSocialProfile::create([
+                'user_id' => $user->id,
+                'social_provider_id' => $socialProvider->id,
+                'uid' => $socialUser->getId()
+            ]);
+            event(new UserSocialProfileLinked($userSocialProfile));
+            $userSocialProfile->load('user');
+            return $userSocialProfile;
+        }
+
+        return null;
     }
 }
