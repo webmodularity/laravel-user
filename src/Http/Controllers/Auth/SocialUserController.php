@@ -2,18 +2,16 @@
 
 namespace WebModularity\LaravelUser\Http\Controllers\Auth;
 
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use WebModularity\LaravelUser\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use WebModularity\LaravelUser\UserSocialProfile;
 use WebModularity\LaravelUser\UserSocialProvider as SocialProvider;
 
-/**
- * Class AuthenticatesUsersAndSocialUsers
- * @package WebModularity\LaravelUser\Http\Controllers\Auth
- */
-trait AuthenticatesSocialUsers
+class SocialUserController extends Controller
 {
-    use RegistersSocialUsers;
+    use AuthenticatesUsers;
 
     public function redirectSocialUser(SocialProvider $socialProvider, Socialite $socialite)
     {
