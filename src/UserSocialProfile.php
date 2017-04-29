@@ -59,7 +59,9 @@ class UserSocialProfile extends Model
         }
 
         // Search for user with matching email address
-        $user = User::where('people.email', $socialUser->getEmail())->first();
+        $user = User::whereHas('person', function ($query) {
+            $query->where('email', $socialUser->getEmail());
+        })->first();
         if (!is_null($user)) {
             // Link social profile
             $userSocialProfile = UserSocialProfile::create([
