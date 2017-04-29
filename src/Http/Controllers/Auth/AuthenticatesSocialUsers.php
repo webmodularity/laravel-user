@@ -40,7 +40,7 @@ trait AuthenticatesSocialUsers
 
         // Attempt to log in the user associated to this social provider
         $socialUser = $socialite->driver($socialProvider->slug)->user();
-        $userSocialProfile = UserSocialProfile::findFromSocialUser($socialUser->getId(), $socialProvider->id);
+        $userSocialProfile = UserSocialProfile::findFromSocialUser($socialUser, $socialProvider->id);
 
         if (!is_null($userSocialProfile)) {
             $this->guard()->login($userSocialProfile->user, false);
@@ -52,9 +52,7 @@ trait AuthenticatesSocialUsers
         // user surpasses their maximum number of attempts they will get locked out.
         $this->incrementLoginAttempts($request);
 
-        // Try and register new user before sending failed response.
-        return $this->registerSocialUser($socialUser, $socialProvider, $request)
-            ?: $this->sendFailedSocialUserLoginResponse($request);
+        return $this->sendFailedSocialUserLoginResponse($request);
     }
 
     /**
