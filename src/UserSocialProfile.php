@@ -43,11 +43,11 @@ class UserSocialProfile extends Model
         return $this->belongsTo(UserSocialProvider::class);
     }
 
-    public static function findFromSocialUser($socialUserId, $socialProviderId)
+    public static function findFromSocialUser($socialUser, $socialProviderId)
     {
         $userSocialProfile = UserSocialProfile::where(
             [
-                ['uid', $socialUserId],
+                ['uid', $socialUser->getId()],
                 ['social_provider_id', $socialProviderId]
             ]
         )
@@ -64,7 +64,7 @@ class UserSocialProfile extends Model
             // Link social profile
             $userSocialProfile = UserSocialProfile::create([
                 'user_id' => $user->id,
-                'social_provider_id' => $socialProvider->id,
+                'social_provider_id' => $socialProviderId,
                 'uid' => $socialUser->getId()
             ]);
             event(new UserSocialProfileLinked($userSocialProfile));
