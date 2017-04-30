@@ -126,7 +126,7 @@ class User extends Model implements
     public static function createFromSocialUser(SocialUser $socialUser, SocialProvider $socialProvider)
     {
         // If there is an existing User return null
-        $userCount = User::whereHas(function ($query) use ($socialUser) {
+        $userCount = static::whereHas('person', function ($query) use ($socialUser) {
             $query->where('email', $socialUser->getEmail());
         })->count();
         if ($userCount > 0) {
