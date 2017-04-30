@@ -13,7 +13,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
+use Laravel\Socialite\Contracts\User as SocialUser;
+use WebModularity\LaravelUser\UserSocialProvider as SocialProvider;
+use Illuminate\Auth\Events\Registered;
+use WebModularity\LaravelUser\Events\UserSocialProfileLinked;
 
 /**
  * WebModularity\LaravelUser\User
@@ -112,5 +115,50 @@ class User extends Model implements
     public function routeNotificationForMail()
     {
         return $this->person->email;
+    }
+
+    /**
+     * Attempt to create new User from data passed by SocialUser and SocialProvider
+     * @param SocialUser $socialUser
+     * @param UserSocialProvider $socialProvider
+     * @return null|User Created User or null on failure
+     */
+    public static function createFromSocialUser(SocialUser $socialUser, SocialProvider $socialProvider)
+    {
+        // If there is an existing User return null
+        $userCount = User::whereHas(function ($query) use ($socialUser) {
+            $query->where('email', $socialUser->getEmail());
+        })->count();
+        if ($userCount > 0) {
+            return null;
+        }
+
+        $person = Person::firstOrCreate($socialUser->getEmail());
+        $nameFromSocial = $socialProvider->getPersonNameFromSocialUser($socialUser);
+        $person->updateIfNull('first_name', $nameFromSocial['firstName'])
+            ->updateIfNull('last_name', $nameFromSocial['lastName']);
+        $user = User::create(
+            [
+                'person_id' => $person->id,
+                'role_id' => static::getNewUserRoleId(),
+                'avatar_url' => $socialProvider->getAvatarFromSocial($socialUser)
+            ]
+        );
+        event(new Registered($user));
+        // Link social profile
+        $userSocialProfile = UserSocialProfile::create([
+            'user_id' => $user->id,
+            'social_provider_id' => $socialProvider->id,
+            'uid' => $socialUser->getId()
+        ]);
+        event(new UserSocialProfileLinked($userSocialProfile));
+        return $user;
+    }
+
+    public static function getNewUserRoleId()
+    {
+        return config('wm.user.register') === true || config('wm.user.register', 0) < 1
+            ? 0
+            : config('wm.user.register', 0);
     }
 }

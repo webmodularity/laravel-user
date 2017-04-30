@@ -39,14 +39,11 @@ trait RegistersUsers
                 'last_name' => $data['last_name']
             ]
         );
-        $roleId = config('wm.user.register') === true || config('wm.user.register', 0) < 1
-            ? 0
-            : config('wm.user.register', 0);
         return !is_null($person)
             ? User::create(
                 [
                     'person_id' => $person->id,
-                    'role_id' => $roleId,
+                    'role_id' => User::getNewUserRoleId(),
                     'password' => bcrypt($data['password'])
                 ]
             )

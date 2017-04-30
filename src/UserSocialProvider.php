@@ -4,6 +4,7 @@ namespace WebModularity\LaravelUser;
 
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Socialite\Contracts\User as SocialUser;
+use WebModularity\LaravelContact\Person;
 
 /**
  * WebModularity\LaravelUser\UserSocialProvider
@@ -43,7 +44,7 @@ class UserSocialProvider extends Model
     /**
      * Get a more accurate first and last name from some social providers.
      * @param $socialUser
-     * @return array|null [] keyed by firstName, lastName
+     * @return array [] keyed by firstName, lastName
      */
 
     public function getPersonNameFromSocialUser(SocialUser $socialUser)
@@ -56,7 +57,7 @@ class UserSocialProvider extends Model
             ];
         }
 
-        return null;
+        return Person::splitFullName($socialUser->getName());
     }
 
     /**

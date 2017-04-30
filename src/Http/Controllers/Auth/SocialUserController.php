@@ -5,13 +5,25 @@ namespace WebModularity\LaravelUser\Http\Controllers\Auth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use WebModularity\LaravelUser\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Laravel\Socialite\Contracts\User as SocialUser;
+use WebModularity\LaravelContact\Person;
 use Laravel\Socialite\Contracts\Factory as Socialite;
+use WebModularity\LaravelUser\User;
 use WebModularity\LaravelUser\UserSocialProfile;
 use WebModularity\LaravelUser\UserSocialProvider as SocialProvider;
 
 class SocialUserController extends Controller
 {
     use AuthenticatesUsers;
+
+    /**
+     * Create a new controller instance.
+     *
+     */
+    public function __construct()
+    {
+        $this->middleware('auth.social_users_allowed');
+    }
 
     public function redirectSocialUser(SocialProvider $socialProvider, Socialite $socialite)
     {
@@ -26,7 +38,7 @@ class SocialUserController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function loginSocialUser(SocialProvider $socialProvider, Socialite $socialite, Request $request)
+    public function handleSocialUser(SocialProvider $socialProvider, Socialite $socialite, Request $request)
     {
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
@@ -43,6 +55,15 @@ class SocialUserController extends Controller
         if (!is_null($userSocialProfile)) {
             $this->guard()->login($userSocialProfile->user, false);
             $this->sendLoginResponse($request);
+        }
+
+        if (config('wm.user.register', false)) {
+            // Attempt to create new user
+            $user = User::createFromSocialUser($socialUser, $socialProvider);
+            if (!is_null($user)) {
+                $this->guard()->login($user, false);
+                $this->sendLoginResponse($request);
+            }
         }
 
         // If the login attempt was unsuccessful we will increment the number of attempts
