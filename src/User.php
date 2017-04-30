@@ -133,7 +133,7 @@ class User extends Model implements
             return null;
         }
 
-        $person = Person::firstOrCreate($socialUser->getEmail());
+        $person = Person::firstOrCreate(['email' => $socialUser->getEmail()]);
         $nameFromSocial = $socialProvider->getPersonNameFromSocialUser($socialUser);
         $person->updateIfNull('first_name', $nameFromSocial['firstName'])
             ->updateIfNull('last_name', $nameFromSocial['lastName']);
