@@ -5,9 +5,12 @@ namespace WebModularity\LaravelUser\Http\Controllers\Auth;
 use WebModularity\LaravelContact\Person;
 use WebModularity\LaravelUser\User;
 use Validator;
+use Illuminate\Foundation\Auth\RegistersUsers as BaseRegistersUsers;
 
 trait RegistersUsers
 {
+    use BaseRegistersUsers;
+
     /**
      * Get a validator for an incoming registration request.
      *
