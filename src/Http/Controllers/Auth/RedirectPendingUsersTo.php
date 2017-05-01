@@ -9,11 +9,12 @@ trait RedirectPendingUsersTo
     protected function redirectTo()
     {
         if (Auth::user()->isPending()) {
-            $this->guard()->logout();
-            session()->flush();
-            session()->regenerate();
-            session()->flash('info', 'This user account is pending approval.');
-            return 'login';
+            if (Route::current()->getActionMethod() == 'register') {
+                session()->flash('pending-user-success', 'New user account created successfully. We will contact you
+                once the approval process is complete and your credentials are active.');
+            } elseif (Route::current()->getActionMethod() == 'reset') {
+                session()->flash('pending-user-success', 'Password reset successfully.');
+            }
         }
 
         return '/';

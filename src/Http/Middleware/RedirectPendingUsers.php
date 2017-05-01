@@ -18,14 +18,12 @@ class RedirectPendingUsers
     public function handle($request, Closure $next)
     {
         if (Auth::user()->isPending()) {
+            $pendingUserSuccess = session('pending-user-success', null);
             Auth::guard()->logout();
             session()->flush();
             session()->regenerate();
-            if (Route::current()->getActionMethod() == 'register') {
-                session()->flash('success', 'New user account created successfully. We will contact you once the
-                approval process is complete and your credentials are active.');
-            } elseif (Route::current()->getActionMethod() == 'reset') {
-                session()->flash('success', 'Password reset successfully.');
+            if (!empty($pendingUserSuccess)) {
+                session()->flash('success', $pendingUserSuccess);
             }
             session()->flash('warning', 'This user account is pending approval.');
             return redirect()->route('login');
