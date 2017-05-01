@@ -12,7 +12,7 @@ use WebModularity\LaravelUser\UserSocialProvider as SocialProvider;
 
 class SocialUserController extends Controller
 {
-    use AuthenticatesUsers, RedirectPendingUsersTo;
+    use AuthenticatesUsers, RedirectUsersTo;
 
     /**
      * Create a new controller instance.
