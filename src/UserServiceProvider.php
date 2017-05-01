@@ -49,6 +49,10 @@ class UserServiceProvider extends ServiceProvider
 
         // Middleware
         $this->app->make('router')->aliasMiddleware(
+            'auth.redirect_pending_users',
+            'WebModularity\LaravelUser\Http\Middleware\RedirectPendingUsers'
+        );
+        $this->app->make('router')->aliasMiddleware(
             'auth.social_users_allowed',
             'WebModularity\LaravelUser\Http\Middleware\SocialUsersAllowed'
         );
