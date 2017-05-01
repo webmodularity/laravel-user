@@ -117,6 +117,11 @@ class User extends Model implements
         return $this->person->email;
     }
 
+    public function isPending()
+    {
+        return $this->role_id < 1;
+    }
+
     /**
      * Attempt to create new User from data passed by SocialUser and SocialProvider
      * @param SocialUser $socialUser
