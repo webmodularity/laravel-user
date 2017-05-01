@@ -84,6 +84,6 @@ class SocialUserController extends Controller
         if ($request->expectsJson()) {
             return response()->json($errors, 422);
         }
-        return redirect()->back()->with('social_login_error', 'No social user found.');
+        return redirect()->route('login')->with('warning', 'No social user found.');
     }
 }
