@@ -5,7 +5,7 @@ namespace WebModularity\LaravelUser\Http\Controllers\Auth;
 use Auth;
 use Route;
 
-trait RedirectPendingUsersTo
+trait RedirectUsersTo
 {
     protected function redirectTo()
     {
