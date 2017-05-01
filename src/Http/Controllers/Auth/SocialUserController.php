@@ -5,8 +5,6 @@ namespace WebModularity\LaravelUser\Http\Controllers\Auth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use WebModularity\LaravelUser\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Laravel\Socialite\Contracts\User as SocialUser;
-use WebModularity\LaravelContact\Person;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use WebModularity\LaravelUser\User;
 use WebModularity\LaravelUser\UserSocialProfile;
@@ -14,7 +12,7 @@ use WebModularity\LaravelUser\UserSocialProvider as SocialProvider;
 
 class SocialUserController extends Controller
 {
-    use AuthenticatesUsers;
+    use AuthenticatesUsers, RedirectPendingUsersTo;
 
     /**
      * Create a new controller instance.
