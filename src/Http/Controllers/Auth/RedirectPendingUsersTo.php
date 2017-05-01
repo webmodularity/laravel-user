@@ -3,6 +3,7 @@
 namespace WebModularity\LaravelUser\Http\Controllers\Auth;
 
 use Auth;
+use Route;
 
 trait RedirectPendingUsersTo
 {

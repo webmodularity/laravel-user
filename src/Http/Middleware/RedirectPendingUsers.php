@@ -4,7 +4,6 @@ namespace WebModularity\LaravelUser\Http\Middleware;
 
 use Closure;
 use Auth;
-use Route;
 
 class RedirectPendingUsers
 {
