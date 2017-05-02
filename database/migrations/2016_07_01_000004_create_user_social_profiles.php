@@ -17,7 +17,7 @@ class CreateUserSocialProfiles extends Migration
             $table->unsignedInteger('user_id');
             $table->unsignedSmallInteger('social_provider_id');
             $table->string('uid');
-            $table->timestamps();
+            $table->timestamp('created_at');
             $table->unique(['user_id', 'social_provider_id']);
             $table->unique(['social_provider_id', 'uid']);
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');

@@ -48,20 +48,12 @@ class SocialUserController extends Controller
 
         // Attempt to log in the user associated to this social provider
         $socialUser = $socialite->driver($socialProvider->slug)->user();
-        $userSocialProfile = UserSocialProfile::findFromSocialUser($socialUser, $socialProvider->id);
+        $user = static::findFromSocialUser($socialUser, $socialProvider)
+            ?: static::createFromSocialUser($socialUser, $socialProvider);
 
-        if (!is_null($userSocialProfile)) {
-            $this->guard()->login($userSocialProfile->user, false);
+        if (!is_null($user)) {
+            $this->guard()->login($user, false);
             $this->sendLoginResponse($request);
-        }
-
-        if (config('wm.user.register', false)) {
-            // Attempt to create new user
-            $user = User::createFromSocialUser($socialUser, $socialProvider);
-            if (!is_null($user)) {
-                $this->guard()->login($user, false);
-                $this->sendLoginResponse($request);
-            }
         }
 
         // If the login attempt was unsuccessful we will increment the number of attempts

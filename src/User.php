@@ -122,6 +122,19 @@ class User extends Model implements
         return $this->role_id < 1;
     }
 
+    public static function findFromSocialUser($socialUser, $socialProvider)
+    {
+        $userSocialProfile = UserSocialProfile::where(
+            [
+                ['uid', $socialUser->getId()],
+                ['social_provider_id', $socialProvider->id]
+            ]
+        )
+            ->with('user')
+            ->first();
+        return $userSocialProfile->user ?: static::linkFromSocialUser($socialUser, $socialProvider);
+    }
+
     /**
      * Attempt to create new User from data passed by SocialUser and SocialProvider
      * @param SocialUser $socialUser
@@ -130,6 +143,10 @@ class User extends Model implements
      */
     public static function createFromSocialUser(SocialUser $socialUser, SocialProvider $socialProvider)
     {
+        if (!config('wm.user.register', false)) {
+            return null;
+        }
+
         // If there is an existing User return null
         $userCount = static::whereHas('person', function ($query) use ($socialUser) {
             $query->where('email', $socialUser->getEmail());
@@ -140,8 +157,11 @@ class User extends Model implements
 
         $person = Person::firstOrCreate(['email' => $socialUser->getEmail()]);
         $nameFromSocial = $socialProvider->getPersonNameFromSocialUser($socialUser);
-        $person->updateIfNull('first_name', $nameFromSocial['firstName'])
-            ->updateIfNull('last_name', $nameFromSocial['lastName']);
+        if ($person->nameIsEmpty()) {
+            $person->first_name = $nameFromSocial['firstName'];
+            $person->last_name = $nameFromSocial['lastName'];
+            $person->save();
+        }
         $user = User::create(
             [
                 'person_id' => $person->id,
@@ -158,6 +178,39 @@ class User extends Model implements
         ]);
         event(new UserSocialProfileLinked($userSocialProfile));
         return $user;
+    }
+
+    public static function linkFromSocialUser(SocialUser $socialUser, SocialProvider $socialProvider)
+    {
+        // Search for user with matching email address
+        $user = static::whereHas('person', function ($query) use ($socialUser) {
+            $query->where('email', $socialUser->getEmail());
+        })->first();
+        if (is_null($user)) {
+            return null;
+        }
+
+        // Link social profile
+        $userSocialProfile = UserSocialProfile::create([
+            'user_id' => $user->id,
+            'social_provider_id' => $socialProvider->id,
+            'uid' => $socialUser->getId()
+        ]);
+        event(new UserSocialProfileLinked($userSocialProfile));
+        $userSocialProfile->load('user');
+        // Update Avatar
+        if (empty($userSocialProfile->user->avatar_url)) {
+            $userSocialProfile->user->avatar_url = $socialProvider->getAvatarFromSocial($socialUser);
+            $userSocialProfile->user()->save();
+        }
+        // Update Name
+        $nameFromSocial = $socialProvider->getPersonNameFromSocialUser($socialUser);
+        if ($userSocialProfile->user->person->nameIsEmpty()) {
+            $userSocialProfile->user->person->first_name = $nameFromSocial['firstName'];
+            $userSocialProfile->user->person->last_name = $nameFromSocial['lastName'];
+            $userSocialProfile->user->person()->save();
+        }
+        return $userSocialProfile->user;
     }
 
     public static function getNewUserRoleId()
