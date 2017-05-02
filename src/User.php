@@ -132,7 +132,9 @@ class User extends Model implements
         )
             ->with('user')
             ->first();
-        return $userSocialProfile->user ?: static::linkFromSocialUser($socialUser, $socialProvider);
+        return !is_null($userSocialProfile)
+            ? $userSocialProfile->user
+            : static::linkFromSocialUser($socialUser, $socialProvider);
     }
 
     /**
