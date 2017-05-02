@@ -48,8 +48,8 @@ class SocialUserController extends Controller
 
         // Attempt to log in the user associated to this social provider
         $socialUser = $socialite->driver($socialProvider->slug)->user();
-        $user = static::findFromSocialUser($socialUser, $socialProvider)
-            ?: static::createFromSocialUser($socialUser, $socialProvider);
+        $user = User::findFromSocialUser($socialUser, $socialProvider)
+            ?: User::createFromSocialUser($socialUser, $socialProvider);
 
         if (!is_null($user)) {
             $this->guard()->login($user, false);
