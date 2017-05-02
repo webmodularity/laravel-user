@@ -203,14 +203,14 @@ class User extends Model implements
         // Update Avatar
         if (empty($userSocialProfile->user->avatar_url)) {
             $userSocialProfile->user->avatar_url = $socialProvider->getAvatarFromSocial($socialUser);
-            $userSocialProfile->user()->save();
+            $userSocialProfile->user->save();
         }
         // Update Name
         $nameFromSocial = $socialProvider->getPersonNameFromSocialUser($socialUser);
         if ($userSocialProfile->user->person->nameIsEmpty()) {
             $userSocialProfile->user->person->first_name = $nameFromSocial['firstName'];
             $userSocialProfile->user->person->last_name = $nameFromSocial['lastName'];
-            $userSocialProfile->user->person()->save();
+            $userSocialProfile->user->person->save();
         }
         return $userSocialProfile->user;
     }
