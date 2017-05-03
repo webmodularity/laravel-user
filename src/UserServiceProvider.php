@@ -68,12 +68,6 @@ class UserServiceProvider extends ServiceProvider
             '\WebModularity\LaravelUser\Validators\UserPersonUniqueValidator@validate',
             $this->app->translator->trans('user-trans::validation.user-person-unique')
         );
-        // Login Method
-        Validator::extend(
-            'loginMethod',
-            '\WebModularity\LaravelUser\Validators\LoginMethodValidator@validate',
-            $this->app->translator->trans('user-trans::validation.login-method')
-        );
 
         // Social Logins
         if (config('wm.user.social', false)) {
