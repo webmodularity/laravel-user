@@ -32,6 +32,11 @@ class UserSocialProvider extends Model
         return $query->where('status', true);
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class)->withPivot(['uid']);
+    }
+
     public function getName()
     {
         if ($this->slug == 'github') {

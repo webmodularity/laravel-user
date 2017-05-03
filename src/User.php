@@ -89,12 +89,9 @@ class User extends Model implements
         return $this->belongsTo(UserRole::class);
     }
 
-    /**
-     * Get the social profiles for this user.
-     */
-    public function userSocialProfiles()
+    public function socialProviders()
     {
-        return $this->hasMany(UserSocialProfile::class);
+        return $this->belongsToMany(UserSocialProvider::class)->withPivot(['uid']);
     }
 
     public function scopeVisibleByRole($query, $roleId = 0)

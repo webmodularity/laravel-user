@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUserSocialProfiles extends Migration
+class CreateUserUserSocialProvider extends Migration
 {
     /**
      * Run the migrations.
@@ -12,13 +12,11 @@ class CreateUserSocialProfiles extends Migration
      */
     public function up()
     {
-        Schema::create('user_social_profiles', function (Blueprint $table) {
-            $table->increments('id');
+        Schema::create('user_user_social_provider', function (Blueprint $table) {
             $table->unsignedInteger('user_id');
             $table->unsignedSmallInteger('social_provider_id');
             $table->string('uid');
-            $table->timestamp('created_at');
-            $table->unique(['user_id', 'social_provider_id']);
+            $table->primary(['user_id', 'social_provider_id']);
             $table->unique(['social_provider_id', 'uid']);
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('social_provider_id')->references('id')->on('user_social_providers')->onUpdate('cascade');
@@ -32,6 +30,6 @@ class CreateUserSocialProfiles extends Migration
      */
     public function down()
     {
-        Schema::drop('user_social_profiles');
+        Schema::drop('user_user_social_provider');
     }
 }
