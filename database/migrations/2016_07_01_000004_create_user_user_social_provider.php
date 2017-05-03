@@ -16,10 +16,10 @@ class CreateUserUserSocialProvider extends Migration
             $table->unsignedInteger('user_id');
             $table->unsignedSmallInteger('user_social_provider_id');
             $table->string('uid');
-            $table->primary(['user_id', 'user_social_provider_id']);
-            $table->unique(['user_social_provider_id', 'uid']);
-            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('user_social_provider_id', 'usp_social_provider_fk')->references('id')->on('user_social_providers')->onUpdate('cascade');
+            $table->primary(['user_id', 'user_social_provider_id'], 'uusp_pk');
+            $table->unique(['user_social_provider_id', 'uid'], 'uusp_unq_uid');
+            $table->foreign('user_id', 'uusp_user_fk')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('user_social_provider_id', 'uusp_social_provider_fk')->references('id')->on('user_social_providers')->onUpdate('cascade');
         });
     }
 
