@@ -19,7 +19,7 @@ class CreateUserUserSocialProvider extends Migration
             $table->primary(['user_id', 'user_social_provider_id']);
             $table->unique(['user_social_provider_id', 'uid']);
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('user_social_provider_id')->references('id')->on('user_social_providers')->onUpdate('cascade');
+            $table->foreign('user_social_provider_id', 'usp_social_provider_fk')->references('id')->on('user_social_providers')->onUpdate('cascade');
         });
     }
 
