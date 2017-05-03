@@ -24,7 +24,7 @@ class CreateUserRoles extends Migration
         $defaultRoles = [
             [
                 'id' => 0,
-                'slug' => 'guest'
+                'slug' => 'pending-approval'
             ],
             [
                 'id' => 1,
