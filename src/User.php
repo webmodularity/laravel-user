@@ -121,17 +121,12 @@ class User extends Model implements
 
     public static function findFromSocialUser($socialUser, $socialProvider)
     {
-        $userSocialProfile = UserSocialProfile::where(
-            [
-                ['uid', $socialUser->getId()],
-                ['social_provider_id', $socialProvider->id]
-            ]
-        )
-            ->with('user')
-            ->first();
-        return !is_null($userSocialProfile)
-            ? $userSocialProfile->user
-            : static::linkFromSocialUser($socialUser, $socialProvider);
+        return static::whereHas('socialProviders', function ($query) use ($socialUser, $socialProvider) {
+            $query->where([
+                ['user_social_provider_id', $socialProvider->id],
+                ['uid', $socialUser->getId()]
+            ]);
+        })->first();
     }
 
     /**
