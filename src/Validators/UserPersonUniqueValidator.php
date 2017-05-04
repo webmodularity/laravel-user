@@ -10,7 +10,6 @@ class UserPersonUniqueValidator
 
     public function validate($attribute, $value, $parameters, $validator)
     {
-        \Log::warning($parameters);
         $person = Person::where('email', $value)->first();
         if (is_null($person)) {
             return true;
