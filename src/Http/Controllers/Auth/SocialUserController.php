@@ -57,8 +57,7 @@ class SocialUserController extends Controller
         $socialUser = $socialite->driver($socialProvider->slug)->user();
         $user = User::findFromSocialUser($socialUser, $socialProvider);
         if (is_null($user) && config('wm.user.register', false)) {
-            if (!is_null($personUser = Person::where('email', $socialUser->getEmail())->hasUser()->get())) {
-                dd($personUser);
+            if (Person::where('email', $socialUser->getEmail())->hasUser()->get()->count() > 0) {
                 // If the register attempt was unsuccessful we will increment the number of attempts
                 // to login and redirect the user back to the login form. Of course, when this
                 // user surpasses their maximum number of attempts they will get locked out.
