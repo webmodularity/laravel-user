@@ -3,16 +3,16 @@
 namespace WebModularity\LaravelUser\Listeners;
 
 use Illuminate\Http\Request;
-use WebModularity\LaravelUser\Events\UserSocialProfileLinked;
+use WebModularity\LaravelUser\Events\UserSocialProviderLinked;
 use WebModularity\LaravelUser\LogUser;
 use WebModularity\LaravelLog\LogRequest;
 use WebModularity\LaravelUser\LogUserAction;
 
 /**
- * Class LogUserSocialProfileLinked
+ * Class LogUserSocialProviderLinked
  * @package WebModularity\LaravelUser\Listeners
  */
-class LogUserSocialProfileLinked
+class LogUserSocialProviderLinked
 {
     protected $request;
 
@@ -27,19 +27,18 @@ class LogUserSocialProfileLinked
     }
 
     /**
-     * Log social profile linking to LogUser
-     * @param UserSocialProfileLinked $event
+     * Log social provider link to LogUser
+     * @param UserSocialProviderLinked $event
      */
-    public function handle(UserSocialProfileLinked $event)
+    public function handle(UserSocialProviderLinked $event)
     {
-        $userSocialProfile = $event->userSocialProfile;
         $logRequest = LogRequest::createFromRequest($this->request);
 
         LogUser::create([
             'log_request_id' => $logRequest->id,
-            'user_id' => $userSocialProfile->user_id,
+            'user_id' => $event->user->user_id,
             'user_action_id' => LogUserAction::where('slug', 'link-social')->first()->id,
-            'social_provider_id' => $userSocialProfile->social_provider_id
+            'social_provider_id' => $event->socialProvider->id
         ]);
     }
 }

@@ -3,11 +3,12 @@
 namespace WebModularity\LaravelUser\Http\Controllers\Auth;
 
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use WebModularity\LaravelContact\Person;
 use WebModularity\LaravelUser\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use WebModularity\LaravelUser\User;
-use WebModularity\LaravelUser\UserSocialProfile;
+use Auth;
 use WebModularity\LaravelUser\UserSocialProvider as SocialProvider;
 
 class SocialUserController extends Controller
@@ -38,6 +39,12 @@ class SocialUserController extends Controller
      */
     public function handleSocialUser(SocialProvider $socialProvider, Socialite $socialite, Request $request)
     {
+        if (Auth::check()) {
+            // Link social account
+            // @TODO: See User::linkFromSocial() method
+            dd('link social account needs work.');
+        }
+
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
         // the IP address of the client making these requests into this application.
@@ -48,8 +55,18 @@ class SocialUserController extends Controller
 
         // Attempt to log in the user associated to this social provider
         $socialUser = $socialite->driver($socialProvider->slug)->user();
-        $user = User::findFromSocialUser($socialUser, $socialProvider)
-            ?: User::createFromSocialUser($socialUser, $socialProvider);
+        $user = User::findFromSocialUser($socialUser, $socialProvider);
+        if (is_null($user) && config('wm.user.register', false)) {
+            if (Person::where('email', $socialUser->getEmail())->hasUser()->count() > 0) {
+                // If the register attempt was unsuccessful we will increment the number of attempts
+                // to login and redirect the user back to the login form. Of course, when this
+                // user surpasses their maximum number of attempts they will get locked out.
+                $this->incrementLoginAttempts($request);
+
+                return $this->sendFailedSocialUserRegisterResponse($request);
+            }
+            $user = User::createFromSocialUser($socialUser, $socialProvider);
+        }
 
         if (!is_null($user)) {
             $this->guard()->login($user, false);
@@ -76,6 +93,23 @@ class SocialUserController extends Controller
         if ($request->expectsJson()) {
             return response()->json($errors, 422);
         }
-        return redirect()->route('login')->with('danger', 'No social user found.');
+        return redirect()->route('login')->with('danger', $errors['socialUser']);
+    }
+
+    /**
+     * Get the failed register response instance.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    protected function sendFailedSocialUserRegisterResponse(Request $request)
+    {
+        $errors = ['socialUser' => 'Unable to register new user account with credentials provided. There may
+        be an existing user account with that email address. If you are trying to link a social provider to an existing
+        user account you will need to log in and access your account settings.'];
+        if ($request->expectsJson()) {
+            return response()->json($errors, 422);
+        }
+        return redirect()->route('login')->with('danger', $errors['socialUser']);
     }
 }

@@ -38,10 +38,10 @@ class CreateLogUserActions extends Migration
                 'slug' => 'unlink-social'
             ],
             [
-                'slug' => 'change-password-request'
+                'slug' => 'reset-password-request'
             ],
             [
-                'slug' => 'change-password-success'
+                'slug' => 'reset-password-success'
             ],
             [
                 'slug' => 'delete'

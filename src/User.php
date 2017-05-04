@@ -16,7 +16,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Laravel\Socialite\Contracts\User as SocialUser;
 use WebModularity\LaravelUser\UserSocialProvider as SocialProvider;
 use Illuminate\Auth\Events\Registered;
-use WebModularity\LaravelUser\Events\UserSocialProfileLinked;
+use WebModularity\LaravelUser\Events\UserSocialProviderLinked;
 
 /**
  * WebModularity\LaravelUser\User
@@ -130,25 +130,13 @@ class User extends Model implements
     }
 
     /**
-     * Attempt to create new User from data passed by SocialUser and SocialProvider
+     * Create new User from data passed by SocialUser and SocialProvider
      * @param SocialUser $socialUser
      * @param UserSocialProvider $socialProvider
-     * @return null|User Created User or null on failure
+     * @return User
      */
     public static function createFromSocialUser(SocialUser $socialUser, SocialProvider $socialProvider)
     {
-        if (!config('wm.user.register', false)) {
-            return null;
-        }
-
-        // If there is an existing User return null
-        $userCount = static::whereHas('person', function ($query) use ($socialUser) {
-            $query->where('email', $socialUser->getEmail());
-        })->count();
-        if ($userCount > 0) {
-            return null;
-        }
-
         $person = Person::firstOrCreate(['email' => $socialUser->getEmail()]);
         $nameFromSocial = $socialProvider->getPersonNameFromSocialUser($socialUser);
         if ($person->nameIsEmpty()) {
@@ -156,22 +144,15 @@ class User extends Model implements
             $person->last_name = $nameFromSocial['lastName'];
             $person->save();
         }
-        $user = User::create(
-            [
-                'person_id' => $person->id,
-                'role_id' => static::getNewUserRoleId(),
-                'avatar_url' => $socialProvider->getAvatarFromSocial($socialUser)
-            ]
-        );
-        event(new Registered($user));
-        // Link social profile
-        $userSocialProfile = UserSocialProfile::create([
-            'user_id' => $user->id,
-            'social_provider_id' => $socialProvider->id,
-            'uid' => $socialUser->getId()
+        $person->user()->create([
+            'role_id' => static::getNewUserRoleId(),
+            'avatar_url' => $socialProvider->getAvatarFromSocial($socialUser)
         ]);
-        event(new UserSocialProfileLinked($userSocialProfile));
-        return $user;
+        event(new Registered($person->user));
+        // Link social profile
+        $person->user->socialProviders()->attach($socialProvider, ['uid' => $socialUser->getId()]);
+        event(new UserSocialProviderLinked($person->user, $socialProvider));
+        return $person->user;
     }
 
     public static function linkFromSocialUser(SocialUser $socialUser, SocialProvider $socialProvider)

@@ -79,8 +79,12 @@ class UserServiceProvider extends ServiceProvider
     {
         // Events
         $events->listen(
-            'WebModularity\LaravelUser\Events\UserSocialProfileLinked',
-            'WebModularity\LaravelUser\Listeners\LogUserSocialProfileLinked'
+            'WebModularity\LaravelUser\Events\UserSocialProviderLinked',
+            'WebModularity\LaravelUser\Listeners\LogUserSocialProviderLinked'
+        );
+        $events->listen(
+            'WebModularity\LaravelUser\Events\UserSocialProviderUnlinked',
+            'WebModularity\LaravelUser\Listeners\LogUserSocialProviderUnlinked'
         );
 
         // View Composers
