@@ -13,7 +13,14 @@ use WebModularity\LaravelUser\UserSocialProvider as SocialProvider;
 
 class SocialUserController extends Controller
 {
-    use AuthenticatesUsers, RedirectUsersTo;
+    use AuthenticatesUsers;
+
+    /**
+     * Where to redirect users after login.
+     *
+     * @var string
+     */
+    protected $redirectTo = '/';
 
     /**
      * Create a new controller instance.
@@ -66,9 +73,16 @@ class SocialUserController extends Controller
                 return $this->sendFailedSocialUserRegisterResponse($request);
             }
             $user = User::createFromSocialUser($socialUser, $socialProvider);
+            if ($user->isPending()) {
+                $request->session()->flash('success', 'New user account created successfully. We will contact you
+                once the approval process is complete and your credentials are active.');
+            }
         }
 
         if (!is_null($user)) {
+            if ($user->isPending()) {
+                return redirect()->route('login')->with('warning', 'This user account is pending approval.');
+            }
             $this->guard()->login($user, false);
             $this->sendLoginResponse($request);
         }
