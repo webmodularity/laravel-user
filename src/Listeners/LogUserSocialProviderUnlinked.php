@@ -36,7 +36,7 @@ class LogUserSocialProviderUnlinked
 
         LogUser::create([
             'log_request_id' => $logRequest->id,
-            'user_id' => $event->user->user_id,
+            'user_id' => $event->user->id,
             'user_action_id' => LogUserAction::where('slug', 'unlink-social')->first()->id,
             'social_provider_id' => $event->socialProvider->id
         ]);
