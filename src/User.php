@@ -91,7 +91,7 @@ class User extends Model implements
 
     public function socialProviders()
     {
-        return $this->belongsToMany(UserSocialProvider::class)->withPivot(['uid']);
+        return $this->belongsToMany(UserSocialProvider::class)->withPivot(['uid', 'email', 'avatar_url']);
     }
 
     public function scopeVisibleByRole($query, $roleId = 0)
@@ -150,7 +150,11 @@ class User extends Model implements
         ]);
         event(new Registered($person->user));
         // Link social profile
-        $person->user->socialProviders()->attach($socialProvider, ['uid' => $socialUser->getId()]);
+        $person->user->socialProviders()->attach($socialProvider, [
+            'uid' => $socialUser->getId(),
+            'email' => $socialUser->getEmail(),
+            'avatar_url' => $socialProvider->getAvatarFromSocial($socialUser)
+        ]);
         event(new UserSocialProviderLinked($person->user, $socialProvider));
         return $person->user;
     }
