@@ -16,6 +16,8 @@ class CreateUserUserSocialProvider extends Migration
             $table->unsignedInteger('user_id');
             $table->unsignedSmallInteger('user_social_provider_id');
             $table->string('uid');
+            $table->string('email');
+            $table->string('avatar_url')->nullable();
             $table->primary(['user_id', 'user_social_provider_id'], 'uusp_pk');
             $table->unique(['user_social_provider_id', 'uid'], 'uusp_unq_uid');
             $table->foreign('user_id', 'uusp_user_fk')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
