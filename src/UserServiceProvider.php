@@ -88,7 +88,7 @@ class UserServiceProvider extends ServiceProvider
         );
 
         // View Composers
-        View::composer(['auth.login', 'auth.register'], function ($view) {
+        View::composer(['auth.login', 'auth.register', 'users.edit'], function ($view) {
             $view->with('socialProviders', UserSocialProvider::isActive()->get());
         });
 
