@@ -64,26 +64,21 @@ class User extends Model implements
         'password', 'remember_token',
     ];
 
-    /*
     protected static function boot()
     {
         parent::boot();
 
         static::addGlobalScope('withPerson', function (Builder $builder) {
-            $builder->with([
-                'person' => function ($query) {
-                    $query->withTrashed();
-                }
-            ]);
+            $builder->with(['person']);
         });
     }
-    */
+
     /**
      * Get the person that owns the user.
      */
     public function person()
     {
-        return $this->belongsTo(Person::class);
+        return $this->belongsTo(Person::class)->withTrashed();
     }
 
     /**
