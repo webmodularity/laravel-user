@@ -64,6 +64,7 @@ class User extends Model implements
         'password', 'remember_token',
     ];
 
+    /*
     protected static function boot()
     {
         parent::boot();
@@ -76,7 +77,7 @@ class User extends Model implements
             ]);
         });
     }
-
+    */
     /**
      * Get the person that owns the user.
      */
