@@ -69,7 +69,11 @@ class User extends Model implements
         parent::boot();
 
         static::addGlobalScope('withPerson', function (Builder $builder) {
-            $builder->with(['person']);
+            $builder->with([
+                'person' => function ($query) {
+                    $query->withTrashed();
+                }
+            ]);
         });
     }
 
