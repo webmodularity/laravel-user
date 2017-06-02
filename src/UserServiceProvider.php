@@ -4,6 +4,7 @@ namespace WebModularity\LaravelUser;
 
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\ServiceProvider;
+use WebModularity\LaravelUser\Observers\UserObserver;
 use View;
 use Route;
 use Validator;
@@ -35,6 +36,9 @@ class UserServiceProvider extends ServiceProvider
 
         // User Auth Event Listener
         $events->subscribe('WebModularity\LaravelUser\Listeners\UserAuthEventSubscriber');
+
+        // User event observer
+        User::observe(UserObserver::class);
 
         // Config
         $this->publishes([__DIR__ . '/../config/user.php' => config_path('wm/user.php')], 'config');
