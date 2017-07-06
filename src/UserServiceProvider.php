@@ -92,7 +92,7 @@ class UserServiceProvider extends ServiceProvider
         );
 
         // View Composers
-        View::composer(['auth.login', 'auth.register', 'wmcms::users.edit', 'wmcms::log-user.filter'], function ($view) {
+        View::composer(['auth.login', 'auth.register'], function ($view) {
             $view->with('socialProviders', UserSocialProvider::isActive()->get());
         });
 
