@@ -19,7 +19,7 @@
   },
   "require": {
     "php": ">=7.0.0",
-    "laravel/framework": "~5.5.0",
+    "laravel/framework": "5.5.*",
     "laravel/socialite": "^3.0",
     "webmod/laravel-contact": "*",
     "webmod/laravel-log": "*",
