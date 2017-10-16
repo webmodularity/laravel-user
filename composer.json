@@ -18,8 +18,8 @@
     }
   },
   "require": {
-    "php": ">=5.6.4",
-    "laravel/framework": "~5.3.0|~5.4.0",
+    "php": ">=7.0.0",
+    "laravel/framework": "~5.5.0",
     "laravel/socialite": "^3.0",
     "webmod/laravel-contact": "*",
     "webmod/laravel-log": "*",
